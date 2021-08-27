@@ -1,0 +1,1 @@
+web: gunicorn devolving_music.wsgi

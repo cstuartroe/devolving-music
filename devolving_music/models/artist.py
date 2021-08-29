@@ -14,3 +14,17 @@ class Artist(models.Model):
         choices=MusicPlatform.choices,
     )
     platform_id = models.CharField(max_length=32, unique=True)
+
+    @staticmethod
+    def from_spotify_json(data):
+        try:
+            artist = Artist.objects.get(platform_id=data["id"])
+        except Artist.DoesNotExist:
+            artist = Artist(platform_id=data["id"])
+
+        artist.name = data["name"]
+        artist.platform = Artist.MusicPlatform.SPOTIFY
+
+        artist.save()
+
+        return artist

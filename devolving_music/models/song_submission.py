@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from .event import Event
 from .song import Song
 
@@ -18,3 +19,20 @@ class SongSubmission(models.Model):
                 ],
             )
         ]
+
+    @staticmethod
+    def submit(song: Song, event: Event):
+        try:
+            sub = SongSubmission.objects.get(
+                event=event,
+                song=song,
+            )
+        except SongSubmission.DoesNotExist:
+            sub = SongSubmission(
+                event=event,
+                song=song,
+                created_at=timezone.now(),
+            )
+            sub.save()
+
+        return sub

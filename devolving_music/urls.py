@@ -1,9 +1,10 @@
 from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import path, re_path, include
 
-from . import views
+from .views import react_index, auto_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    re_path(r'^.*$', views.react_index, name="react_index")
+    path('api/', include(auto_views())),
+    re_path(r'^.*$', react_index, name="react_index")
 ]

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Redirect } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import ResourceManager from "./ResourceManager";
 import { Event } from "./models";
 
@@ -30,7 +30,7 @@ export default class EventSelector extends Component<EventSelectorProps, EventSe
 
   render() {
     if (this.state.submitted) {
-      return <Redirect to="/"/>
+      return <Navigate replace to="/"/>
     }
 
     if (this.state.events === undefined) {

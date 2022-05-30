@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+
 
 import "../static/scss/main.scss";
 import ResourceManager from "./ResourceManager";
@@ -56,17 +57,16 @@ class App extends Component<{}, AppState> {
             <div className="row">
               <div className="col-2"/>
               <div className="col-8">
-                <Switch>
-                  <Route exact={true} path="/">
-                    <Home event={this.state.event}/>
-                  </Route>
+                <Routes>
+                  <Route path="/">
+                    <Route index element={<Home event={this.state.event}/>}/>
 
-                  <Route exact={true} path="/event-selector">
-                    <EventSelector setEvent={this.setEvent.bind(this)}/>
-                  </Route>
+                    <Route path="/event-selector"
+                           element={<EventSelector setEvent={this.setEvent.bind(this)}/>}/>
 
-                  <Redirect to="/"/>
-                </Switch>
+                    <Route path="*" element={<Navigate replace to="/"/>}/>
+                  </Route>
+                </Routes>
               </div>
             </div>
           </div>

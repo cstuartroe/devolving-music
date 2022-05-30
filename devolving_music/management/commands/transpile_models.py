@@ -47,7 +47,10 @@ class Command(BaseCommand):
                 elif t is BigAutoField:
                     type_string = "number"
                 elif t is CharField:
-                    type_string = "string"
+                    if field.choices is not None:
+                        type_string = " | ".join(repr(choice) for choice, _ in field.choices)
+                    else:
+                        type_string = "string"
                 elif t is DateField:
                     type_string = "string"
                 elif t is DateTimeField:

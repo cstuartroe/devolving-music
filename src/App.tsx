@@ -8,6 +8,7 @@ import { Event } from "./models";
 import Header from "./Header";
 import Home from "./Home";
 import EventSelector from "./EventSelector";
+import SubmitPlaylist from "./SubmitPlaylist";
 
 
 const event_key = "selected_event";
@@ -46,23 +47,30 @@ class App extends Component<{}, AppState> {
   }
 
   render() {
-    if (this.state.event === undefined) {
+    const { event } = this.state;
+
+    if (event === undefined) {
       return null;
     } else {
       return (
         <Router>
           <div id="main-container" className="container-fluid">
-            <Header event={this.state.event}/>
+            <Header event={event}/>
 
             <div className="row">
               <div className="col-2"/>
               <div className="col-8">
                 <Routes>
                   <Route path="/">
-                    <Route index element={<Home event={this.state.event}/>}/>
+                    <Route index element={<Home event={event}/>}/>
 
-                    <Route path="/event-selector"
-                           element={<EventSelector setEvent={this.setEvent.bind(this)}/>}/>
+                    <Route path="event-selector"
+                           element={<EventSelector setEvent={this.setEvent.bind(this)}/>}
+                    />
+
+                    <Route path={"submit-playlist"}>
+                      <Route index element={<SubmitPlaylist/>}/>
+                    </Route>
 
                     <Route path="*" element={<Navigate replace to="/"/>}/>
                   </Route>

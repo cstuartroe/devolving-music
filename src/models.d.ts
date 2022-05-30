@@ -5,7 +5,7 @@ Run `python manage.py transpile_models` to update it. */
 export type Artist = {
   id: number,
   name: string,
-  platform: string,
+  platform: 'Spotify' | 'YouTube' | 'Soundcloud',
   platform_id: string,
 }
 
@@ -22,6 +22,7 @@ export type Event = {
   date: string,
   created_at: string,
   image: string,
+  visible: boolean,
 }
 
 export type SongSubmission = {

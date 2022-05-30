@@ -6,3 +6,4 @@ class Event(models.Model):
     date = models.DateField()
     created_at = models.DateTimeField()
     image = models.CharField(max_length=128)
+    visible = models.BooleanField()

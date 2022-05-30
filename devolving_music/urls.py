@@ -2,9 +2,7 @@ from django.contrib import admin
 from django.urls import path, re_path, include
 from rest_framework import routers, urls as rfurls
 
-from .views import react_index
-from .views.events import EventViewSet
-from .views.song_submissions import SongSubmissionViewSet
+from .views import react_index, MODEL_ENDPOINTS
 from .views.submit_spotify_playlist import SubmitSpotifyPlaylistView
 
 
@@ -15,8 +13,8 @@ class OptionalSlashRouter(routers.SimpleRouter):
 
 
 router = OptionalSlashRouter()
-router.register('events', EventViewSet)
-router.register('song_submissions', SongSubmissionViewSet)
+for api_path, viewset in MODEL_ENDPOINTS.items():
+    router.register(api_path, viewset)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

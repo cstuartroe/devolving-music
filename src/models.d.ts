@@ -41,3 +41,8 @@ export type SongComparison = {
   first_post_peakier: boolean,
 }
 
+type TABLES = {
+  'events': Event,
+  'song_submissions': SongSubmission,
+}
+

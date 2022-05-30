@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Redirect } from "react-router-dom";
 import ResourceManager from "./ResourceManager";
 import { Event } from "./models";
 
@@ -29,9 +30,27 @@ export default class EventSelector extends Component<EventSelectorProps, EventSe
       return null;
     } else {
       return (
-        <div>
-          {this.state.events.map(event => (
-            <div key={event.id}>{event.name}</div>
+        <div className="row">
+          <div className="col-12">
+            <h2>Select an event:</h2>
+          </div>
+          {this.state.events.sort((e1, e2) => e1.date.localeCompare(e2.date))
+            .map(event => (
+            <div key={event.id}
+                 className="col-12 event-card">
+              <div className="event-card-image"
+                   style={{
+                     backgroundImage: `url("${event.image}")`,
+                   }}
+                   onClick={() => {
+                     this.props.setEvent(event);
+                   }}
+              >
+                <div className="event-card-inner">
+                  {event.name}
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       );

@@ -21,6 +21,7 @@ export type Event = {
   name: string,
   date: string,
   created_at: string,
+  image: string,
 }
 
 export type SongSubmission = {
@@ -39,3 +40,4 @@ export type SongComparison = {
   first_peakier: boolean,
   first_post_peakier: boolean,
 }
+

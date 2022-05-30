@@ -4,6 +4,12 @@
     font-weight: normal;
 }
 
+@font-face {
+    font-family: "Goldleaf";
+    src: url("/static/font/Goldleaf.ttf") format('truetype');
+    font-weight: normal;
+}
+
 body {
     background-color: black;
     color: white;
@@ -11,6 +17,43 @@ body {
 
 h1, h2 {
     text-align: center;
+    font-family: "Goldleaf", sans-serif;
+}
+
+.header {
+    background-color: white;
+    color: black;
+    margin-bottom: 20px;
+}
+
+.header-logo {
+    text-align: center;
+    padding: 2vh;
+    font-family: "YourDreams", fantasy;
+    font-size: 30px;
+    white-space: pre-line;
+}
+
+.header a {
+    color: inherit;
+    text-decoration: inherit;
+}
+
+.menu-item a {
+    width: 100%;
+    height: 100%;
+    padding-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 28px;
+    font-family: "Goldleaf", sans-serif;
+}
+
+.menu-item:hover {
+    background-color: black;
+    color: white;
 }
 
 .event-card {
@@ -23,7 +66,8 @@ h1, h2 {
 }
 
 .event-card-inner {
-    font-size: 18px;
+    font-family: "Goldleaf", sans-serif;
+    font-size: 22px;
     padding: 10vh;
     width: 100%;
     height: 100%;

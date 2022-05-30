@@ -12,13 +12,16 @@ type EventSelectorProps = {
 
 type EventSelectorState = {
   events?: Event[],
+  submitted: boolean,
 }
 
 export default class EventSelector extends Component<EventSelectorProps, EventSelectorState>{
   constructor(props: EventSelectorProps) {
     super(props);
 
-    this.state = {}
+    this.state = {
+      submitted: false,
+    }
   }
 
   componentDidMount() {
@@ -26,6 +29,10 @@ export default class EventSelector extends Component<EventSelectorProps, EventSe
   }
 
   render() {
+    if (this.state.submitted) {
+      return <Redirect to="/"/>
+    }
+
     if (this.state.events === undefined) {
       return null;
     } else {
@@ -44,6 +51,7 @@ export default class EventSelector extends Component<EventSelectorProps, EventSe
                    }}
                    onClick={() => {
                      this.props.setEvent(event);
+                     this.setState({submitted: true});
                    }}
               >
                 <div className="event-card-inner">

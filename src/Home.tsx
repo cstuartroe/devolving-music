@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Event } from "./models";
 
 type HomeProps = {
-  event: Event | null,
+  event: Event,
 }
 
 export default class Home extends Component<HomeProps, {}> {

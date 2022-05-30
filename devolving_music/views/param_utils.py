@@ -1,7 +1,5 @@
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from django.db.models import Model
-from django.urls import path, re_path
-import os
 import json
 
 
@@ -66,35 +64,3 @@ def safe_url_params(func):
 
 def safe_json_params(func):
     return _safe_params(func, lambda request: json.loads(request.body.decode()))
-
-
-def camelize(snake):
-    return "".join(map(str.title, snake.split("_")))
-
-
-def endpoint_miss(_request):
-    return HttpResponse(status=404)
-
-
-# I need to go take a shower after writing this.
-def auto_views():
-    view_classes = []
-
-    for filename in os.listdir(os.path.dirname(__file__)):
-        if filename.endswith(".py") and not filename.startswith("_"):
-            modname = filename[:-3]
-            exec(f"from . import {modname}")
-            module = locals()[modname]
-            view_class = vars(module)[camelize(modname) + "View"]
-            view_classes.append((modname, view_class))
-
-    views = []
-    for modname, view_class in view_classes:
-        uri = getattr(view_class, "PATH", None) or modname
-
-        views.append(path(uri, view_class.as_view(), name=modname))
-
-    views.append(re_path(r'^.*$', endpoint_miss, name="react_index"))
-
-    return views
-

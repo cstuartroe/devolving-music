@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from devolving_music.models import Event
+from devolving_music.models.event import Event
 
 
 class EventSerializer(serializers.ModelSerializer):

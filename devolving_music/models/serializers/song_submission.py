@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from devolving_music.models import SongSubmission
+from devolving_music.models.song_submission import SongSubmission
 
 
 class SongSubmissionSerializer(serializers.ModelSerializer):

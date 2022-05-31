@@ -20,7 +20,7 @@ router.register('song_submissions', SongSubmissionViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/submit_spotify_playlist', SubmitSpotifyPlaylistView.as_view()),
+    path('api/submit-playlist/Spotify', SubmitSpotifyPlaylistView.as_view()),
     path('api/', include(router.urls)),
     path('api-auth/', include(rfurls)),
     re_path(r'^.*$', react_index, name="react_index"),

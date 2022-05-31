@@ -1,7 +1,7 @@
 import re
 from django.views import View
 from devolving_music.lib.spotify import spotify_client
-from .param_utils import safe_json_params
+from .param_utils import safe_json_params, success, failure
 from devolving_music.models.event import Event
 from devolving_music.models.song import Song
 from devolving_music.models.song_submission import SongSubmission
@@ -18,6 +18,10 @@ class SubmitSpotifyPlaylistView(View):
             r"^https://open.spotify.com/playlist/([a-zA-Z0-9]+)",
             playlist_link,
         )
+
+        if m is None:
+            return failure("Malformed Spotify link.")
+
         playlist_id = m.group(1)
 
         while True:
@@ -40,4 +44,4 @@ class SubmitSpotifyPlaylistView(View):
                 song = Song.from_spotify_json(track)
                 submissions.append(SongSubmission.submit(song=song, event=event))
 
-        return [SongSubmissionSerializer(sub).data for sub in submissions]
+        return success([SongSubmissionSerializer(sub).data for sub in submissions])

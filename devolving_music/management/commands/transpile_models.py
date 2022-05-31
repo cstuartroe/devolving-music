@@ -19,7 +19,7 @@ MODELS_TO_TRANSPILE = [
 ]
 
 
-OUTFILE = "src/models.d.ts"
+OUTFILE = "src/models.ts"
 
 
 class Command(BaseCommand):
@@ -36,7 +36,7 @@ class Command(BaseCommand):
         )
 
         for model in MODELS_TO_TRANSPILE:
-            contents += f"export type {model.__name__} = {{\n"
+            model_string = f"export type {model.__name__} = {{\n"
 
             for field in model._meta.get_fields():
                 t = type(field)
@@ -48,7 +48,9 @@ class Command(BaseCommand):
                     type_string = "number"
                 elif t is CharField:
                     if field.choices is not None:
-                        type_string = " | ".join(repr(choice) for choice, _ in field.choices)
+                        array_name = f"{model.__name__}_{field.name}"
+                        contents += f"export const {array_name} = {[c for c, _ in field.choices]} as const;\n\n"
+                        type_string = f"typeof {array_name}[number]"
                     else:
                         type_string = "string"
                 elif t is DateField:
@@ -65,9 +67,11 @@ class Command(BaseCommand):
                     raise ValueError(f"Unknown field type: {t}")
 
                 if type_string is not None:
-                    contents += f"  {field.name}: {type_string},\n"
+                    model_string += f"  {field.name}: {type_string},\n"
 
-            contents += "}\n\n"
+            model_string += "}\n\n"
+
+            contents += model_string
 
         with open(OUTFILE, "w") as fh:
             fh.write(contents)

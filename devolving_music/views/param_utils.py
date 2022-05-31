@@ -13,13 +13,13 @@ def success(blob):
     )
 
 
-def failure(message: str):
+def failure(message: str, status: int = 400):
     return JsonResponse(
         {
             "success": False,
             "message": message
         },
-        status=400
+        status=status
     )
 
 
@@ -53,7 +53,7 @@ def _safe_params(func, params_getter):
             else:
                 return failure(f"Expected parameter {argname} of type {t}")
 
-        return success(func(_self, request, **passed_params))
+        return func(_self, request, **passed_params)
 
     return f
 

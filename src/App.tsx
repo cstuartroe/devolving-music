@@ -4,11 +4,13 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-d
 
 import "../static/scss/main.scss";
 import ResourceManager from "./ResourceManager";
-import { Event } from "./models";
+import { Event, Artist_platform } from "./models";
 import Header from "./Header";
 import Home from "./Home";
 import EventSelector from "./EventSelector";
+import ChoosePlatform from "./ChoosePlatform";
 import SubmitPlaylist from "./SubmitPlaylist";
+import {platform} from "os";
 
 
 const event_key = "selected_event";
@@ -69,7 +71,12 @@ class App extends Component<{}, AppState> {
                     />
 
                     <Route path={"submit-playlist"}>
-                      <Route index element={<SubmitPlaylist/>}/>
+                      <Route index element={<ChoosePlatform/>}/>
+                      {Artist_platform.map(platform => (
+                        <Route path={platform} key={platform} element={
+                          <SubmitPlaylist platform={platform} event={event}/>
+                        }/>
+                      ))}
                     </Route>
 
                     <Route path="*" element={<Navigate replace to="/"/>}/>

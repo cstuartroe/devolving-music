@@ -2,10 +2,12 @@
 DO NOT manually edit it.
 Run `python manage.py transpile_models` to update it. */
 
+export const Artist_platform = ['Spotify', 'YouTube', 'Soundcloud'] as const;
+
 export type Artist = {
   id: number,
   name: string,
-  platform: 'Spotify' | 'YouTube' | 'Soundcloud',
+  platform: typeof Artist_platform[number],
   platform_id: string,
 }
 

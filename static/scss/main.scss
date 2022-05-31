@@ -10,6 +10,8 @@
     font-weight: normal;
 }
 
+$antique_white: #FAEBD7;
+
 body {
     background-color: black;
     color: white;
@@ -105,4 +107,27 @@ a, a:hover {
     font-size: 50px;
     padding: 6vh 6vh 10vh;
     border-radius: 20px;
+}
+
+.submit-playlist input {
+    width: 100%;
+}
+
+.playlist-submit-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.playlist-submit-button h2 {
+    padding: 2vh;
+    cursor: pointer;
+    margin: 2vh;
+    background-color: $antique_white;
+    color: black;
+    border-radius: 10px;
+}
+
+.playlist-submit-button h2:hover {
+    background-color: white;
 }

@@ -45,10 +45,7 @@ def _safe_params(func, params_getter):
         passed_params = {}
         for argname, t in func.__annotations__.items():
             if argname in d:
-                try:
-                    passed_params[argname] = resolve_arg_type(t, d[argname])
-                except BaseException as e:
-                    return failure(str(e))
+                passed_params[argname] = resolve_arg_type(t, d[argname])
 
             else:
                 return failure(f"Expected parameter {argname} of type {t}")
@@ -59,7 +56,7 @@ def _safe_params(func, params_getter):
 
 
 def safe_url_params(func):
-    return _safe_params(func, lambda request: request.GET)
+    return _safe_params(func, lambda request: dict(request.GET.items()))
 
 
 def safe_json_params(func):

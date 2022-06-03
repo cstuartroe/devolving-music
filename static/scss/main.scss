@@ -11,6 +11,7 @@
 }
 
 $antique_white: #FAEBD7;
+$main_font: "Goldleaf", sans-serif;
 
 body {
     background-color: black;
@@ -19,7 +20,7 @@ body {
 
 h1, h2, p {
     text-align: center;
-    font-family: "Goldleaf", sans-serif;
+    font-family: $main_font;
 }
 
 p {
@@ -28,6 +29,12 @@ p {
 
 a, a:hover {
     color: #5E5694;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .header {
@@ -56,15 +63,12 @@ a, a:hover {
 .menu-item a, .platform-tile a, .event-card-inner {
     width: 100%;
     height: 100%;
-    font-family: "Goldleaf", sans-serif;
+    font-family: $main_font;
 }
 
 .menu-item a, .platform-tile a {
     padding-bottom: 10px;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
 }
 
 .menu-item:hover {
@@ -113,13 +117,7 @@ a, a:hover {
     width: 100%;
 }
 
-.playlist-submit-button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.playlist-submit-button h2 {
+.submit-button h2 {
     padding: 2vh;
     cursor: pointer;
     margin: 2vh;
@@ -128,6 +126,21 @@ a, a:hover {
     border-radius: 10px;
 }
 
-.playlist-submit-button h2:hover {
+.submit-button h2:hover {
     background-color: white;
 }
+
+.rating-question > div {
+    display: flex;
+    justify-content: space-around;
+}
+
+.rating-question > div > div {
+    flex: 1;
+    text-align: center;
+    font-family: $main_font;
+    font-size: 20px;
+    padding: 1vh 0 2vh;
+}
+
+

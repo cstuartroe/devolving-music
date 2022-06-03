@@ -102,7 +102,7 @@ export default class SubmitPlaylist extends Component<Props, State> {
 
             <p style={{color: "red"}}>{this.state.message}</p>
 
-            <div className="playlist-submit-button">
+            <div className="submit-button center">
               {bottomElement()}
             </div>
           </div>

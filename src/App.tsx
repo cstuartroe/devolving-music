@@ -10,7 +10,7 @@ import Home from "./Home";
 import EventSelector from "./EventSelector";
 import ChoosePlatform from "./ChoosePlatform";
 import SubmitPlaylist from "./SubmitPlaylist";
-import {platform} from "os";
+import RateSongs from "./RateSongs";
 
 
 const event_key = "selected_event";
@@ -70,7 +70,7 @@ class App extends Component<{}, AppState> {
                            element={<EventSelector setEvent={this.setEvent.bind(this)}/>}
                     />
 
-                    <Route path={"submit-playlist"}>
+                    <Route path="submit-playlist">
                       <Route index element={<ChoosePlatform/>}/>
                       {Artist_platform.map(platform => (
                         <Route path={platform} key={platform} element={
@@ -78,6 +78,8 @@ class App extends Component<{}, AppState> {
                         }/>
                       ))}
                     </Route>
+
+                    <Route path="rate" element={<RateSongs event={event}/>}/>
 
                     <Route path="*" element={<Navigate replace to="/"/>}/>
                   </Route>

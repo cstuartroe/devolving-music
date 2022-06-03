@@ -31,7 +31,7 @@ export default class Header extends Component<HeaderProps, HeaderState>{
   renderMenuItem(to: string, text: string) {
     return (
       <div className={`col-${this.itemWidth()} menu-item`}>
-        <Link to={to}>
+        <Link to={to} className="center">
           {text}
         </Link>
       </div>

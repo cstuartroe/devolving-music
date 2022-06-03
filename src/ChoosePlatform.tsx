@@ -20,7 +20,7 @@ export default class ChoosePlatform extends Component<{}, {}> {
       <div className="col-12 col-md-4 platform-tile" key={platform} style={{
         backgroundImage: `url("${platformInfo[platform].img_link}")`
       }}>
-        <Link to={`/submit-playlist/${platform}`}>
+        <Link to={`/submit-playlist/${platform}`} className="center">
           {platform}
         </Link>
       </div>

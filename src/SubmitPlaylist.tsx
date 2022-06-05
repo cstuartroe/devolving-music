@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { safePost } from "./utils";
 import { Event, Artist_platform } from "./models";
 
 type Props = {
@@ -45,12 +46,9 @@ export default class SubmitPlaylist extends Component<Props, State> {
       message: "",
     })
 
-    fetch(`/api/submit-playlist/${this.props.platform}`, {
-      method: "POST",
-      body: JSON.stringify({
-        event: this.props.event.id,
-        playlist_link: this.state.link,
-      })
+    safePost(`/api/submit-playlist/${this.props.platform}`, {
+      event: this.props.event.id,
+      playlist_link: this.state.link,
     }).then(response => {
       if (response.ok) {
         this.setState({

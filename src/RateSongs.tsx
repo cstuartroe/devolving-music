@@ -1,20 +1,6 @@
 import React, { Component } from "react";
+import { safePost } from "./utils";
 import { Event, SongSubmission } from "./models";
-
-function parsedCookies(): {[key: string]: string} {
-  const kvpairs = document.cookie.split(';');
-
-  let out: {[key: string]: string} = {};
-
-  kvpairs.forEach(s => {
-    const ss = s.trim().split('=');
-    if (ss.length == 2) {
-      out[ss[0]] = ss[1];
-    }
-  });
-
-  return out;
-}
 
 type SongTileProps = {
   sub?: SongSubmission,
@@ -122,17 +108,10 @@ export default class RateSongs extends Component<Props, State> {
       message: "",
     })
 
-    fetch("/api/song_comparisons", {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': parsedCookies()['csrftoken'],
-      },
-      body: JSON.stringify({
-        first_submission_id: this.state.sub1?.id,
-        second_submission_id: this.state.sub2?.id,
-        ...this.state.response,
-      }),
+    safePost("/api/song_comparisons", {
+      first_submission_id: this.state.sub1?.id,
+      second_submission_id: this.state.sub2?.id,
+      ...this.state.response,
     }).then(res => {
       if (res.ok) {
         this.newSong()

@@ -65,12 +65,21 @@ export default class RateSongs extends Component<Props, State> {
     })
 
     fetch(`/api/pair?event=${this.props.event.id}`)
-      .then(res => res.json())
-      .then(data => this.setState({
-        sub1: data.result.sub1,
-        sub2: data.result.sub2,
-        status: "ready",
-      }))
+      .then(res => {
+        res.json().then(data => {
+          if (res.ok) {
+            this.setState({
+              sub1: data.result.sub1,
+              sub2: data.result.sub2,
+              status: "ready",
+            })
+          } else {
+            this.setState({message: data.message, status: "ready"});
+          }
+        })
+      })
+      .catch(_ => this.setState({message: "An error occurred", status: "ready"}))
+
   }
 
   setFormValue(qid: QuestionId, value: boolean) {

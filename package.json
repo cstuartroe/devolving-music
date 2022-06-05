@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "./node_modules/webpack-cli/bin/cli.js --mode development ./src/index.tsx",
+    "dev": "node ./node_modules/webpack-cli/bin/cli.js --mode development ./src/index.tsx",
     "build": "./node_modules/webpack-cli/bin/cli.js --mode production ./src/index.tsx "
   },
   "repository": {

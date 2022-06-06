@@ -1,15 +1,40 @@
 import React, { Component } from "react";
 import { safePost } from "./utils";
-import { Event, SongSubmission } from "./models";
+import {Event, Song, SongSubmission} from "./models";
+
+const embedHeight = "150";
 
 function SpotifyEmbed(platform_id: string) {
   return (
     <iframe
       style={{borderRadius: "12px"}} id={`embed-${platform_id}`}
       src={`https://open.spotify.com/embed/track/${platform_id}?utm_source=generator`}
-      width="100%" height="150" frameBorder="0" allowFullScreen={true}
+      width="100%" height={embedHeight} frameBorder="0" allowFullScreen
       allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"/>
   );
+}
+
+function YouTubeEmbed(platform_id: string) {
+  return (
+    <iframe
+      id={`embed-${platform_id}`} title="YouTube video player"
+      src={`https://www.youtube.com/embed/${platform_id}`}
+      width="100%" height={embedHeight} frameBorder="0" allowFullScreen
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"/>
+  );
+}
+
+function Embed(song: Song) {
+  console.log(song);
+
+  switch (song.artists[0].platform) {
+    case "Spotify":
+      return SpotifyEmbed(song.platform_id);
+    case "YouTube":
+      return YouTubeEmbed(song.platform_id);
+    case "Soundcloud":
+      return <div/>
+  }
 }
 
 type SongTileProps = {
@@ -27,17 +52,11 @@ class SongTile extends Component<SongTileProps, {}> {
     const song = sub.song;
     const artist = song.artists[0];
 
-    let embed = null;
-
-    if (artist.platform === "Spotify") {
-      embed = SpotifyEmbed(song.platform_id);
-    }
-
     return (
       <div className="col-6">
         <h2>{song.title}</h2>
         <p>by {artist.name} on {artist.platform}</p>
-        {embed}
+        {Embed(song)}
       </div>
     );
   }

@@ -4,14 +4,10 @@
     font-weight: normal;
 }
 
-@font-face {
-    font-family: "Goldleaf";
-    src: url("/static/font/Goldleaf.ttf") format('truetype');
-    font-weight: normal;
-}
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap');
 
 $antique_white: #FAEBD7;
-$main_font: "Goldleaf", sans-serif;
+$main_font: "Montserrat", sans-serif;
 
 body {
     background-color: black;
@@ -21,6 +17,10 @@ body {
 h1, h2, p {
     text-align: center;
     font-family: $main_font;
+}
+
+h2 {
+    font-size: 1.6rem;
 }
 
 p {
@@ -148,7 +148,7 @@ a, a:hover {
     text-align: center;
     font-family: $main_font;
     font-size: 20px;
-    padding: 1vh 0 2vh;
+    padding: 1.5vh;
 }
 
 

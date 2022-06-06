@@ -130,12 +130,20 @@ a, a:hover {
     background-color: white;
 }
 
-.rating-question > div {
+.rate-songs .row {
+    padding-bottom: 2.5vh;
+}
+
+.rating-question-text, .rating-question-option {
     display: flex;
     justify-content: space-around;
 }
 
-.rating-question > div > div {
+.rating-question-option {
+    cursor: pointer;
+}
+
+.rating-question-option > div {
     flex: 1;
     text-align: center;
     font-family: $main_font;

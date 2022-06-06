@@ -1,5 +1,6 @@
 from django.views import View
 from .param_utils import safe_url_params, success, failure
+from devolving_music.lib.spotify import get_embed_color
 from devolving_music.models.event import Event
 from devolving_music.models.song_submission import SongSubmission
 from devolving_music.models.serializers.song_submission import SongSubmissionSerializer
@@ -18,4 +19,6 @@ class GetSongPairView(View):
         return success({
             "sub1": SongSubmissionSerializer(sub1).data,
             "sub2": SongSubmissionSerializer(sub2).data,
+            "color1": get_embed_color(sub1.song.platform_id),
+            "color2": get_embed_color(sub2.song.platform_id),
         })

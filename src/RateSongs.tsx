@@ -2,6 +2,16 @@ import React, { Component } from "react";
 import { safePost } from "./utils";
 import { Event, SongSubmission } from "./models";
 
+function SpotifyEmbed(platform_id: string) {
+  return (
+    <iframe
+      style={{borderRadius: "12px"}} id={`embed-${platform_id}`}
+      src={`https://open.spotify.com/embed/track/${platform_id}?utm_source=generator`}
+      width="100%" height="150" frameBorder="0" allowFullScreen={true}
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"/>
+  );
+}
+
 type SongTileProps = {
   sub?: SongSubmission,
 }
@@ -17,10 +27,17 @@ class SongTile extends Component<SongTileProps, {}> {
     const song = sub.song;
     const artist = song.artists[0];
 
+    let embed = null;
+
+    if (artist.platform === "Spotify") {
+      embed = SpotifyEmbed(song.platform_id);
+    }
+
     return (
       <div className="col-6">
         <h2>{song.title}</h2>
         <p>by {artist.name} on {artist.platform}</p>
+        {embed}
       </div>
     );
   }
@@ -43,6 +60,8 @@ type State = {
   message: string,
   sub1?: SongSubmission,
   sub2?: SongSubmission,
+  color1?: string,
+  color2?: string,
   response: FormResponse,
 }
 
@@ -70,8 +89,7 @@ export default class RateSongs extends Component<Props, State> {
         res.json().then(data => {
           if (res.ok) {
             this.setState({
-              sub1: data.result.sub1,
-              sub2: data.result.sub2,
+              ...data.result,
               status: "ready",
             })
           } else {
@@ -125,7 +143,7 @@ export default class RateSongs extends Component<Props, State> {
   }
 
   render() {
-    const { sub1, sub2, status, message, response } = this.state;
+    const { sub1, sub2, color1, color2, status, message, response } = this.state;
 
     const content = () => {
       if (status === "pending") {
@@ -144,41 +162,43 @@ export default class RateSongs extends Component<Props, State> {
       }
     }
 
+    const rad = 15;
+
+    const questionButton = (qid: QuestionId, formValue: boolean, sub?: SongSubmission, color?: string) => (
+      <div
+        className="col-6 rating-question-option"
+        onClick={() => this.setFormValue(qid, formValue)}
+        style={{
+          backgroundColor: (response[qid] === formValue) ? `#${color}` : '#333333',
+          borderRadius: formValue ? `${rad}px 0 0 ${rad}px` : `0 ${rad}px ${rad}px 0`,
+        }}
+      >
+        <div>{sub?.song.title}</div>
+      </div>
+    );
+
     const questionForm = (qid: QuestionId, text: string) => (
-      <div className="col-12 col-md-6 rating-question">
-        <h2>{text}</h2>
-
-        <div>
-          <div>{sub1?.song.title}</div>
-          <div>{sub2?.song.title}</div>
+      <div className="row rating-question">
+        <div className="col-12 rating-question-text">
+          <h2>{text}</h2>
         </div>
 
-        <div>
-          <div>
-            <input type="radio" name={`${qid}_better`} value="true" checked={response[qid] === true}
-                   onChange={e => this.setFormValue(qid, e.target.value === "true")}/>
-          </div>
-          <div>
-            <input type="radio" name={`${qid}_better`} value="false" checked={response[qid] === false}
-                   onChange={e => this.setFormValue(qid, e.target.value === "true")}/>
-          </div>
-        </div>
+        {questionButton(qid, true, sub1, color1)}
+        {questionButton(qid, false, sub2, color2)}
       </div>
     );
 
     return (
-      <div className="row rate-songs">
-        <div className="col-12">
-          <h2>Please submit a rating for the below songs:</h2>
+      <div className="rate-songs">
+        <div className="row">
+          {content()}
         </div>
-
-        {content()}
 
         {questionForm("first_better", "Which song is better?")}
         {questionForm("first_peakier", "Which song is more energetic/danceable?")}
         {questionForm("first_post_peakier", "Which song is weirder?")}
 
-        <div className="col-12 col-md-6">
+        <div className="col-12">
           <div className="submit-button center">
             <h2 onClick={() => this.submit()}>Submit</h2>
           </div>

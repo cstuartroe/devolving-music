@@ -3,29 +3,41 @@ from .artist import Artist
 
 
 class Song(models.Model):
-    title = models.CharField(max_length=64)
+    title = models.CharField(max_length=128)
     artists = models.ManyToManyField(Artist)
     platform_id = models.CharField(max_length=32, unique=True)
 
     @staticmethod
-    def from_spotify_json(data):
-        data = data["track"]
-
-        artists = [
-            Artist.from_spotify_json(artist_data)
-            for artist_data in data["artists"]
-        ]
-
+    def from_fields(platform_id: str, title: str, artists: list):
         try:
-            song = Song.objects.get(platform_id=data["id"])
+            song = Song.objects.get(platform_id=platform_id)
         except Song.DoesNotExist:
-            song = Song(platform_id=data["id"])
+            song = Song(platform_id=platform_id)
 
-        song.title = data["name"]
+        song.title = title
         song.save()
 
         song.artists.set(artists)
         song.save()
 
         return song
+
+    @staticmethod
+    def from_spotify_json(data):
+        artists = [
+            Artist.from_fields(artist_data["id"], artist_data["name"], Artist.MusicPlatform.SPOTIFY)
+            for artist_data in data["artists"]
+        ]
+
+        return Song.from_fields(data["id"], data["name"], artists)
+
+    @staticmethod
+    def from_youtube_json(data):
+        artist = Artist.from_fields(
+            data["snippet"]["channelId"],
+            data["snippet"]["channelTitle"],
+            Artist.MusicPlatform.YOUTUBE,
+        )
+
+        return Song.from_fields(data["id"], data["snippet"]["title"], [artist])
 

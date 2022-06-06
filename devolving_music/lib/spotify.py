@@ -8,6 +8,26 @@ spotify_client = spotipy.Spotify(
 )
 
 
+def get_song_data(playlist_id: str):
+    offset = 0
+
+    while True:
+        res = spotify_client.playlist_items(
+            playlist_id=playlist_id,
+            fields="items(track(id, name, artists(id, name), is_local))",
+            limit=100,
+            offset=offset,
+            additional_types=("track",),
+        )
+
+        yield from (item["track"] for item in res["items"])
+
+        if len(res["items"]) == 0:
+            break
+
+        offset += 100
+
+
 def get_embed_color(platform_id: str):
     res = requests.get(f"https://open.spotify.com/embed/track/{platform_id}?utm_source=generator")
 

@@ -6,6 +6,7 @@ from .views import react_index
 from .views.events import EventViewSet
 from .views.song_submissions import SongSubmissionViewSet
 from .views.submit_spotify_playlist import SubmitSpotifyPlaylistView
+from .views.submit_youtube_playlist import SubmitYoutubePlaylistView
 from .views.song_comparisons import SongComparisonsView
 from .views.get_song_pair import GetSongPairView
 
@@ -23,6 +24,7 @@ router.register('song_submissions', SongSubmissionViewSet)
 urlpatterns = [
     re_path('admin/?', admin.site.urls),
     path('api/submit-playlist/Spotify', SubmitSpotifyPlaylistView.as_view()),
+    path('api/submit-playlist/YouTube', SubmitYoutubePlaylistView.as_view()),
     path('api/pair', GetSongPairView.as_view()),
     path('api/song_comparisons', SongComparisonsView.as_view()),
     path('api/', include(router.urls)),

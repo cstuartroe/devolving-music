@@ -37,26 +37,44 @@ function Embed(song: Song) {
   }
 }
 
+function byline(song: Song) {
+  const artist = song.artists[0];
+
+  return `by ${artist.name} on ${artist.platform}`
+}
+
 type SongTileProps = {
-  sub?: SongSubmission,
+  sub1?: SongSubmission,
+  sub2?: SongSubmission,
 }
 
 class SongTile extends Component<SongTileProps, {}> {
   render() {
-    const { sub } = this.props;
+    const { sub1, sub2 } = this.props;
 
-    if (sub === undefined) {
+    if (sub1 === undefined || sub2 === undefined) {
       return null;
     }
 
-    const song = sub.song;
-    const artist = song.artists[0];
+    const outerStyle = {display: "flex", justifyContent: "space-around"};
+    const style = {flex: 1};
 
     return (
-      <div className="col-6">
-        <h2>{song.title}</h2>
-        <p>by {artist.name} on {artist.platform}</p>
-        {Embed(song)}
+      <div className="col-12">
+        <div style={outerStyle}>
+          <h2 style={style}>{sub1.song.title}</h2>
+          <h2 style={style}>{sub2.song.title}</h2>
+        </div>
+
+        <div style={outerStyle}>
+          <p style={style}>{byline(sub1.song)}</p>
+          <p style={style}>{byline(sub2.song)}</p>
+        </div>
+
+        <div style={outerStyle}>
+          <div style={{...style, padding: "1vw"}}>{Embed(sub1.song)}</div>
+          <div style={{...style, padding: "1vw"}}>{Embed(sub2.song)}</div>
+        </div>
       </div>
     );
   }
@@ -172,12 +190,7 @@ export default class RateSongs extends Component<Props, State> {
           </div>
         );
       } else {
-        return (
-          <>
-            <SongTile sub={sub1}/>
-            <SongTile sub={sub2}/>
-          </>
-        );
+        return <SongTile sub1={sub1} sub2={sub2}/>;
       }
     }
 
@@ -185,7 +198,7 @@ export default class RateSongs extends Component<Props, State> {
 
     const questionButton = (qid: QuestionId, formValue: boolean, sub?: SongSubmission, color?: string) => (
       <div
-        className="col-6 rating-question-option"
+        className="col-6 rating-question-option center"
         onClick={() => this.setFormValue(qid, formValue)}
         style={{
           backgroundColor: (response[qid] === formValue) ? `#${color}` : '#333333',

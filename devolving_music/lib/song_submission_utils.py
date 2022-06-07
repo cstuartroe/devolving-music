@@ -6,7 +6,7 @@ from devolving_music.models.duplication_flag import DuplicationFlag
 
 
 def _check_duplicates(sub: SongSubmission):
-    for existing_sub in SongSubmission.objects.filter(event__exact=sub.event):
+    for existing_sub in SongSubmission.objects.filter(event__exact=sub.event).exclude(id=sub.id):
         if Song.fuzzy_match(existing_sub.song, sub.song):
             flag = DuplicationFlag(
                 existing_submission=existing_sub,

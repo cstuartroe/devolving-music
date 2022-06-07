@@ -18,3 +18,10 @@ class SongSubmission(models.Model):
                 ],
             )
         ]
+
+    def voteable(self) -> bool:
+        for flag in self.possible_prior_duplicates.all():
+            if flag.blocks_voting():
+                return False
+
+        return True

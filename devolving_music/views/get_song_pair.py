@@ -9,12 +9,16 @@ from devolving_music.models.serializers.song_submission import SongSubmissionSer
 class GetSongPairView(View):
     @safe_url_params
     def get(self, _request, event: Event):
-        queryset = SongSubmission.objects.filter(event__exact=event)
+        voteable_submissions = [
+            sub
+            for sub in SongSubmission.objects.filter(event__exact=event).order_by('?')
+            if sub.voteable()
+        ]
 
-        if queryset.count() <= 2:
+        if len(voteable_submissions) < 2:
             return failure("Not enough songs have been submitted for this event.")
 
-        sub1, sub2 = queryset.order_by('?')[:2]
+        sub1, sub2 = voteable_submissions[:2]
 
         return success({
             "sub1": SongSubmissionSerializer(sub1).data,

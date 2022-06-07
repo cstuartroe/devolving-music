@@ -25,7 +25,7 @@ class DuplicationFlag(models.Model):
         related_name="possible_prior_duplicates",
     )
     status = models.CharField(max_length=20, choices=Status.choices)
-    reviewed_at = models.DateTimeField()
+    reviewed_at = models.DateTimeField(null=True)
 
     class Meta:
         constraints = [
@@ -37,3 +37,6 @@ class DuplicationFlag(models.Model):
                 ],
             )
         ]
+
+    def blocks_voting(self) -> bool:
+        return self.status in (DuplicationFlag.Status.UNREVIEWED, DuplicationFlag.Status.DUPLICATE)

@@ -4,7 +4,6 @@ from rest_framework import routers, urls as rfurls
 
 from .views import react_index
 from .views.events import EventViewSet
-from .views.song_submissions import SongSubmissionViewSet
 from .views.submit_spotify_playlist import SubmitSpotifyPlaylistView
 from .views.submit_youtube_playlist import SubmitYoutubePlaylistView
 from .views.song_comparisons import SongComparisonsView
@@ -19,7 +18,6 @@ class OptionalSlashRouter(routers.SimpleRouter):
 
 router = OptionalSlashRouter()
 router.register('events', EventViewSet)
-router.register('song_submissions', SongSubmissionViewSet)
 
 urlpatterns = [
     re_path('admin/?', admin.site.urls),

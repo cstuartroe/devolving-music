@@ -6,6 +6,7 @@ from devolving_music.models.event import Event
 from devolving_music.models.song import Song
 from devolving_music.models.song_submission import SongSubmission
 from devolving_music.models.serializers.song_submission import SongSubmissionSerializer
+from devolving_music.lib.song_submission_utils import submit_song
 
 
 class SubmitYoutubePlaylistView(View):
@@ -26,6 +27,7 @@ class SubmitYoutubePlaylistView(View):
         submissions = []
         for video in video_data:
             song = Song.from_youtube_json(video)
-            submissions.append(SongSubmission.submit(song=song, event=event))
+            sub = submit_song(song=song, event=event)
+            submissions.append(sub)
 
         return success([SongSubmissionSerializer(sub).data for sub in submissions])

@@ -4,8 +4,8 @@ from devolving_music.lib.spotify import get_song_data
 from .param_utils import safe_json_params, success, failure
 from devolving_music.models.event import Event
 from devolving_music.models.song import Song
-from devolving_music.models.song_submission import SongSubmission
 from devolving_music.models.serializers.song_submission import SongSubmissionSerializer
+from devolving_music.lib.song_submission_utils import submit_song
 
 
 class SubmitSpotifyPlaylistView(View):
@@ -25,6 +25,7 @@ class SubmitSpotifyPlaylistView(View):
         for track in get_song_data(playlist_id):
             if not track["is_local"]:
                 song = Song.from_spotify_json(track)
-                submissions.append(SongSubmission.submit(song=song, event=event))
+                sub = submit_song(song=song, event=event)
+                submissions.append(sub)
 
         return success([SongSubmissionSerializer(sub).data for sub in submissions])

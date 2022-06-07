@@ -1,4 +1,5 @@
 from django.db import models
+from devolving_music.lib.language import fuzzy_match
 from .artist import Artist
 
 
@@ -40,4 +41,8 @@ class Song(models.Model):
         )
 
         return Song.from_fields(data["id"], data["snippet"]["title"], [artist])
+
+    @staticmethod
+    def fuzzy_match(song1: "Song", song2: "Song") -> bool:
+        return fuzzy_match(song1.title, song2.title)
 

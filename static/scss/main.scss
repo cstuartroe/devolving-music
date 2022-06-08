@@ -117,12 +117,24 @@ a, a:hover {
     width: 100%;
 }
 
-.submit-button h2 {
-    padding: 2vh;
-    cursor: pointer;
-    margin: 2vh;
+.button, .submit-button h2 {
     background-color: $antique_white;
     color: black;
+    padding: 2vh;
+    cursor: pointer;
+
+    &:hover {
+        background-color: white;
+    }
+
+    &.selected {
+        background-color: #77bb77;
+        cursor: initial;
+    }
+}
+
+.submit-button h2 {
+    margin: 2vh;
     border-radius: 10px;
 }
 
@@ -150,5 +162,3 @@ a, a:hover {
     font-size: 20px;
     padding: 1.5vh;
 }
-
-

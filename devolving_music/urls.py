@@ -8,7 +8,7 @@ from .views.submit_spotify_playlist import SubmitSpotifyPlaylistView
 from .views.submit_youtube_playlist import SubmitYoutubePlaylistView
 from .views.song_comparisons import SongComparisonsView
 from .views.get_song_pair import GetSongPairView
-from .views.unreviewed_duplication_flags import UnreviewedDuplicationFlagViewSet
+from .views.unreviewed_duplication_flags import UnreviewedDuplicationFlagView
 
 
 class OptionalSlashRouter(routers.SimpleRouter):
@@ -19,7 +19,6 @@ class OptionalSlashRouter(routers.SimpleRouter):
 
 router = OptionalSlashRouter()
 router.register('events', EventViewSet)
-router.register('unreviewed_duplication_flags', UnreviewedDuplicationFlagViewSet)
 
 urlpatterns = [
     re_path('admin/?', admin.site.urls),
@@ -27,6 +26,7 @@ urlpatterns = [
     path('api/submit-playlist/YouTube', SubmitYoutubePlaylistView.as_view()),
     path('api/pair', GetSongPairView.as_view()),
     path('api/song_comparisons', SongComparisonsView.as_view()),
+    path('api/unreviewed_duplication_flags', UnreviewedDuplicationFlagView.as_view()),
     path('api/', include(router.urls)),
     path('api-auth/', include(rfurls)),
     re_path(r'^.*$', react_index, name="react_index"),

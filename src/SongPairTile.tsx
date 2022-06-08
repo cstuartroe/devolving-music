@@ -24,8 +24,6 @@ function YouTubeEmbed(platform_id: string) {
 }
 
 function Embed(song: Song) {
-  console.log(song);
-
   switch (song.artists[0].platform) {
     case "Spotify":
       return SpotifyEmbed(song.platform_id);

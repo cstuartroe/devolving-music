@@ -7,7 +7,7 @@ def success(blob):
     return JsonResponse(
         {
             "success": True,
-            "result": blob
+            "results": blob
         },
         status=200
     )

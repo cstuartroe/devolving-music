@@ -50,7 +50,7 @@ export default class RateSongs extends Component<Props, State> {
         res.json().then(data => {
           if (res.ok) {
             this.setState({
-              ...data.result,
+              ...data.results,
               status: "ready",
             })
           } else {

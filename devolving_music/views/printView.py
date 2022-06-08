@@ -17,5 +17,5 @@ def printMe(request,Value="Hello Buddy"):
             if sub.voteable()
         ]
     sub1= voteable_submissions[:]
-    Value=sub1
+    Value=[sub1,sub1]
     return render(request,"index_test.html",{'content':Value})

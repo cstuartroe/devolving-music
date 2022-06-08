@@ -8,13 +8,9 @@ from .views.submit_spotify_playlist import SubmitSpotifyPlaylistView
 from .views.submit_youtube_playlist import SubmitYoutubePlaylistView
 from .views.song_comparisons import SongComparisonsView
 from .views.get_song_pair import GetSongPairView
-<<<<<<< HEAD
-from .views.unreviewed_duplication_flags import UnreviewedDuplicationFlagViewSet
-from .views.printView import printMe
-=======
 from .views.unreviewed_duplication_flags import UnreviewedDuplicationFlagView
+from .views.printView import printMe
 
->>>>>>> b5cd353e13645f796fb8b2260db08f616f02548a
 
 class OptionalSlashRouter(routers.SimpleRouter):
     def __init__(self):

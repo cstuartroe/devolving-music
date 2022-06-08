@@ -9,7 +9,7 @@ from .views.submit_youtube_playlist import SubmitYoutubePlaylistView
 from .views.song_comparisons import SongComparisonsView
 from .views.get_song_pair import GetSongPairView
 from .views.unreviewed_duplication_flags import UnreviewedDuplicationFlagViewSet
-
+from .views.printView import printMe
 
 class OptionalSlashRouter(routers.SimpleRouter):
     def __init__(self):
@@ -29,5 +29,6 @@ urlpatterns = [
     path('api/song_comparisons', SongComparisonsView.as_view()),
     path('api/', include(router.urls)),
     path('api-auth/', include(rfurls)),
+    path('print',printMe),
     re_path(r'^.*$', react_index, name="react_index"),
 ]

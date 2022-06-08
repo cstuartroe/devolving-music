@@ -8,6 +8,7 @@ from .views.submit_spotify_playlist import SubmitSpotifyPlaylistView
 from .views.submit_youtube_playlist import SubmitYoutubePlaylistView
 from .views.song_comparisons import SongComparisonsView
 from .views.get_song_pair import GetSongPairView
+from .views.unreviewed_duplication_flags import UnreviewedDuplicationFlagViewSet
 
 
 class OptionalSlashRouter(routers.SimpleRouter):
@@ -18,6 +19,7 @@ class OptionalSlashRouter(routers.SimpleRouter):
 
 router = OptionalSlashRouter()
 router.register('events', EventViewSet)
+router.register('unreviewed_duplication_flags', UnreviewedDuplicationFlagViewSet)
 
 urlpatterns = [
     re_path('admin/?', admin.site.urls),

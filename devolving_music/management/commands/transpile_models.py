@@ -8,6 +8,7 @@ from devolving_music.models.song import Song
 from devolving_music.models.event import Event
 from devolving_music.models.song_submission import SongSubmission
 from devolving_music.models.song_comparison import SongComparison
+from devolving_music.models.duplication_flag import DuplicationFlag
 
 
 MODELS_TO_TRANSPILE = [
@@ -16,6 +17,7 @@ MODELS_TO_TRANSPILE = [
     Event,
     SongSubmission,
     SongComparison,
+    DuplicationFlag,
 ]
 
 

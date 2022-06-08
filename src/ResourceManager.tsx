@@ -1,7 +1,8 @@
-import { Event } from "./models";
+import { Event, DuplicationFlag } from "./models";
 
 type fetchable_models = {
   events: Event,
+  unreviewed_duplication_flags: DuplicationFlag,
 }
 
 type ResourceManagerState = {

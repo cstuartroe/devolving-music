@@ -44,3 +44,13 @@ export type SongComparison = {
   first_post_peakier: boolean,
 }
 
+export const DuplicationFlag_status = ['unreviewed', 'unrelated', 'different_versions', 'duplicate'] as const;
+
+export type DuplicationFlag = {
+  id: number,
+  existing_submission: SongSubmission,
+  new_submission: SongSubmission,
+  status: typeof DuplicationFlag_status[number],
+  reviewed_at: string,
+}
+

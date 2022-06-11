@@ -18,4 +18,4 @@ def printMe(request,Value="Hello Buddy"):
         ]
     sub1= voteable_submissions[:]
     Value=[sub1,sub1]
-    return render(request,"index_test.html",{'content':Value})
+    return render(request,"index_test.html",{'content':Value,'content2':sub1})

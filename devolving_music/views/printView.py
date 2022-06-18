@@ -17,5 +17,9 @@ def printMe(request,Value="Hello Buddy"):
             if sub.voteable()
         ]
     sub1= voteable_submissions[:]
-    Value=[sub1,sub1]
-    return render(request,"index_test.html",{'content':Value,'content2':sub1})
+    sub1=sub1[0].song
+
+    Value=[sub1,sub1.Energy_Score]
+    sub1.Energy_Score=4
+    value2=sub1.Energy_Score
+    return render(request,"index_test.html",{'content':Value,'content2':value2})

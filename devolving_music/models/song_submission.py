@@ -7,6 +7,7 @@ class SongSubmission(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
     created_at = models.DateTimeField()
+    
 
     class Meta:
         constraints = [

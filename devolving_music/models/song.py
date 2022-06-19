@@ -7,10 +7,7 @@ class Song(models.Model):
     title = models.CharField(max_length=128)
     artists = models.ManyToManyField(Artist)
     platform_id = models.CharField(max_length=32, unique=True)
-    Energy_Score=0
-    PostPeak_Score=0
-    Quality_Score=0
-
+   
     @staticmethod
     def from_fields(platform_id: str, title: str, artists: list):
         try:
@@ -48,4 +45,4 @@ class Song(models.Model):
     @staticmethod
     def fuzzy_match(song1: "Song", song2: "Song") -> bool:
         return fuzzy_match(song1.title, song2.title)
-
+    

@@ -26,3 +26,14 @@ class SongSubmission(models.Model):
                 return False
 
         return True
+   
+    @staticmethod
+    def get_voteable_submissions(Event):
+        # import pdb
+        # pdb.set_trace()
+        voteable_submissions = [
+                sub
+                for sub in SongSubmission.objects.filter(event__exact=Event).order_by('?')
+                if sub.voteable()
+            ]
+        return voteable_submissions 

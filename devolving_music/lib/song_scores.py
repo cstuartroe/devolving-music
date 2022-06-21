@@ -1,6 +1,7 @@
 from devolving_music.lib.elo_scoring import elo_rating
 from devolving_music.models.song_submission import SongSubmission
 from collections.abc import Iterable
+
 class SongScores():
     def __init__(self,submission:SongSubmission):
         self._song_submission=submission

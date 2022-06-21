@@ -1,7 +1,7 @@
 from devolving_music.lib.elo_scoring import elo_rating
 from devolving_music.models.song_submission import SongSubmission
 from collections.abc import Iterable
-
+#testing
 class SongScores():
     def __init__(self,submission:SongSubmission):
         self._song_submission=submission
@@ -31,7 +31,7 @@ class SongScores():
                         \n Quality Score:{self._quality_score} \n Post Peak Score:{self._post_peak_score}\
                         \n Info Score:{self._info_score} "
         return string_output
-        
+
     @staticmethod
     def get_scores(comparison_submissions: Iterable[SongSubmission]):
         #incomplete implement get_scores

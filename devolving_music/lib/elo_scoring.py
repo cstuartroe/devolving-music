@@ -22,4 +22,3 @@ def elo_rating(ra, rb, k, d):
 		ra = ra + k * (0 - pa)
 		rb= rb+ k * (1 - pb)
 	return ra,rb
-

@@ -7,7 +7,7 @@ class SongSubmission(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
     created_at = models.DateTimeField()
-    
+
 
     class Meta:
         constraints = [
@@ -26,7 +26,7 @@ class SongSubmission(models.Model):
                 return False
 
         return True
-   
+
     @staticmethod
     def get_voteable_submissions(Event):
         voteable_submissions = [
@@ -34,4 +34,4 @@ class SongSubmission(models.Model):
                 for sub in SongSubmission.objects.filter(event__exact=Event).order_by('?')
                 if sub.voteable()
             ]
-        return voteable_submissions 
+        return voteable_submissions

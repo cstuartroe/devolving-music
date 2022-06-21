@@ -45,4 +45,3 @@ class Song(models.Model):
     @staticmethod
     def fuzzy_match(song1: "Song", song2: "Song") -> bool:
         return fuzzy_match(song1.title, song2.title)
-    

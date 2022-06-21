@@ -8,7 +8,6 @@ def probability(rating1, rating2):
 # k is a constant that determines how much you can gain or lose in one match .
 # d is 1 when player A wins 0 when they loseSS
 def elo_rating(ra, rb, k, d):
-
 	pb = probability(ra, rb)
 	pa = probability(rb, ra)
 	# Case When Player A wins

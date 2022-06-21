@@ -29,8 +29,6 @@ class SongSubmission(models.Model):
    
     @staticmethod
     def get_voteable_submissions(Event):
-        # import pdb
-        # pdb.set_trace()
         voteable_submissions = [
                 sub
                 for sub in SongSubmission.objects.filter(event__exact=Event).order_by('?')

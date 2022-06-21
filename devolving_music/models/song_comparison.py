@@ -9,6 +9,7 @@ class SongComparison(models.Model):
     first_better = models.BooleanField()
     first_peakier = models.BooleanField()
     first_post_peakier = models.BooleanField()    
+    
     @staticmethod
     def get_event_comparisons(Event):
         comparison_event_submissions = list(sub for sub in SongComparison.objects.select_related('first_submission').filter(first_submission__event__exact=Event).order_by('created_at'))

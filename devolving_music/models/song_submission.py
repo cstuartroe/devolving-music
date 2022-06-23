@@ -1,9 +1,7 @@
 from bisect import bisect_left
 from typing import Iterable
 
-from sqlite3 import IntegrityError
 from django.db import models
-from django.utils.functional import cached_property
 
 from .song import Song
 from devolving_music.lib.elo_scoring import elo_rating
@@ -19,14 +17,14 @@ class SongSubmission(models.Model):
         self.energy_score = None
         self.quality_score = None
         self.post_peak_score = None
-        self.counted_compares = []
+        self.counted_compares = {}
 
     @property
     def info_score(self):
         return len(self.counted_compares)
 
     def update_info(self, comparison):
-        self.counted_compares.append(comparison.id)
+        self.counted_compares.add(comparison.id)
 
     def compare_present(self, comparison):
         return comparison.id in self.counted_compares
@@ -82,8 +80,8 @@ class SongSubmission(models.Model):
         else:
             return song1, song2
 
-    def submission_index(self, song_submissions: Iterable["SongSubmission"]):
-        song_submissions = list(sub.id for sub in song_submissions)
+    def submission_index(self, song_subs: Iterable["SongSubmission"]):
+        song_submissions = list(sub.id for sub in song_subs)
         # Locate the leftmost value exactly equal to x
         i = bisect_left(song_submissions, self.id)
         if (i != len(song_submissions) and song_submissions[i] == self.id):

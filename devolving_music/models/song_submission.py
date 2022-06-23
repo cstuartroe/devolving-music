@@ -17,7 +17,7 @@ class SongSubmission(models.Model):
         self.energy_score = None
         self.quality_score = None
         self.post_peak_score = None
-        self.counted_compares = {}
+        self.counted_compares = set()
 
     @property
     def info_score(self):

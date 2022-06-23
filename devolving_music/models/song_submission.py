@@ -98,8 +98,8 @@ class SongSubmission(models.Model):
     @staticmethod
     def get_scores(comparison_submissions:Iterable["SongComparison"],\
         song_submissions:Iterable["SongSubmission"]):
-        #song_submissions song_submissions should be a list of 
-        # song submissions ordered from least to greatest 
+        #song_submissions song_submissions should be a list of
+        # song submissions ordered from least to greatest
         # by songsubmission id
         for compare in comparison_submissions:
             song1_index,song2_index=SongSubmission.find_submission_index(compare,song_submissions)

@@ -3,8 +3,6 @@ from typing import Iterable
 
 from django.db import models
 
-from devolving_music.models.song_comparison import SongComparison
-
 from .song import Song
 from devolving_music.lib.elo_scoring import elo_rating
 from .event import Event
@@ -25,10 +23,10 @@ class SongSubmission(models.Model):
     def info_score(self):
         return len(self.counted_compares)
 
-    def log_comparison(self, comparison: SongComparison):
+    def log_comparison(self, comparison: "SongComparison"):
         self.counted_compares.add(comparison.id)
 
-    def compare_present(self, comparison: SongComparison):
+    def compare_present(self, comparison: "SongComparison"):
         return comparison.id in self.counted_compares
 
     class Meta:

@@ -3,7 +3,7 @@ from django.db import models
 from .event import Event
 from .song import Song
 from devolving_music.lib.elo_scoring import elo_rating
-
+from django.utils.functional import cached_property
 class SongSubmission(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
@@ -15,8 +15,7 @@ class SongSubmission(models.Model):
         self._counted_compares=[]
         self._info_score=len(self._counted_compares)
         super().__init__(*args, **kwargs)
-
-
+    
     def update_info(self,comparison):
         self._counted_compares.append(comparison.id)
         self._info_score=len(self._counted_compares)
@@ -45,7 +44,7 @@ class SongSubmission(models.Model):
     def get_voteable_submissions(Event):
         voteable_submissions = [
                 sub
-                for sub in SongSubmission.objects.filter(event__exact=Event).order_by('?')
+                for sub in SongSubmission.objects.filter(event__exact=Event).order_by('created_at')
                 if sub.voteable()
             ]
         return voteable_submissions
@@ -58,8 +57,10 @@ class SongSubmission(models.Model):
 
     @staticmethod
     def elo_song_rating(comparison_submission:"SongComparison", score_range=30):
-        song1=comparison_submission.first_submission
-        song2=comparison_submission.second_submission
+        song1id=comparison_submission.first_submission.id
+        song2id=comparison_submission.second_submission.id
+        song1=SongSubmission.objects.get(id=song1id)
+        song2=SongSubmission.objects.get(id=song2id)
         if(SongSubmission.check_compare(comparison_submission)):
             song1.update_info(comparison_submission)
             song2.update_info(comparison_submission)
@@ -75,6 +76,5 @@ class SongSubmission(models.Model):
             return False
     @staticmethod
     def get_scores(comparison_submissions:Iterable["SongComparison"]):
-        #incomplete implement get_scores
         for compare in comparison_submissions:
             SongSubmission.elo_song_rating(compare)

@@ -6,4 +6,4 @@ node_modules
 dist
 staticfiles
 .cache
-
+devolving_music/management/commands/sandbox.py

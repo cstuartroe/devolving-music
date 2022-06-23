@@ -9,17 +9,22 @@ class SongSubmission(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
     created_at = models.DateTimeField()
+
     def __init__(self, *args, **kwargs):
-        self.energy_score = 0
-        self.quality_score=0
-        self.post_peak_score=0
-        self.counted_compares=[]
-        self.info_score=len(self.counted_compares)
         super().__init__(*args, **kwargs)
-    
+        self.energy_score = None
+        self.quality_score=None
+        self.post_peak_score=None
+        self.counted_compares=[]
+
+    @property
+    def info_score(self):
+        return len(self.counted_compares)
+
+
     def update_info(self,comparison):
         self.counted_compares.append(comparison.id)
-        self.info_score=len(self.counted_compares)
+
     def compare_present(self,comparison):
         return comparison.id in self.counted_compares
 
@@ -40,7 +45,7 @@ class SongSubmission(models.Model):
                 return False
 
         return True
-    
+
     @staticmethod
     def get_voteable_submissions(Event):
         voteable_submissions = [
@@ -49,21 +54,26 @@ class SongSubmission(models.Model):
                 if sub.voteable()
             ]
         return voteable_submissions
+
     @staticmethod
-    def check_compare(comparison_submission:"SongComparison",song1:"SongSubmission",song2:"SongSubmission"):
+    def check_compare(comparison_submission:"SongComparison",\
+        song1:"SongSubmission",song2:"SongSubmission"):
         return not song1.compare_present(comparison_submission) and \
         not song2.compare_present(comparison_submission)
 
     @staticmethod
     def elo_song_rating(comparison_submission:"SongComparison",song1,song2,score_range=30):
-        if(SongSubmission.check_compare(comparison_submission,song1,song2)):
+        if SongSubmission.check_compare(comparison_submission,song1,song2):
             song1.update_info(comparison_submission)
             song2.update_info(comparison_submission)
-            song1.quality_score,song2.quality_score=elo_rating(song1.quality_score,song2.quality_score,\
+            song1.quality_score,song2.quality_score=\
+                elo_rating(song1.quality_score,song2.quality_score,\
                 score_range,comparison_submission.first_better)
-            song1.energy_score,song2.energy_score=elo_rating(song1.energy_score,song2.energy_score,\
+            song1.energy_score,song2.energy_score=\
+                elo_rating(song1.energy_score,song2.energy_score,\
                 score_range,comparison_submission.first_peakier)
-            song1.post_peak_score,song2.post_peak_score=elo_rating(song1.post_peak_score,song2.post_peak_score,\
+            song1.post_peak_score,song2.post_peak_score=\
+                elo_rating(song1.post_peak_score,song2.post_peak_score,\
                 score_range,comparison_submission.first_post_peakier)
             return song1,song2
         else:
@@ -84,15 +94,17 @@ class SongSubmission(models.Model):
         song_index_1=SongSubmission.submission_index(song_submissions,compare.first_submission)
         song_index_2=SongSubmission.submission_index(song_submissions,compare.second_submission)
         return  song_index_1,song_index_2
-    
+
     @staticmethod
-    def get_scores(comparison_submissions:Iterable["SongComparison"],song_submissions:Iterable["SongSubmission"]):
-        #song_submissions song_submissions should be a list of song submissions ordered from least to greatest 
+    def get_scores(comparison_submissions:Iterable["SongComparison"],\
+        song_submissions:Iterable["SongSubmission"]):
+        #song_submissions song_submissions should be a list of 
+        # song submissions ordered from least to greatest 
         # by songsubmission id
         for compare in comparison_submissions:
             song1_index,song2_index=SongSubmission.find_submission_index(compare,song_submissions)
             song1=song_submissions[song1_index]
             song2=song_submissions[song2_index]
-            song_submissions[song1_index],song_submissions[song2_index]=SongSubmission.elo_song_rating(compare,song1,song2)
+            song_submissions[song1_index],song_submissions[song2_index]=\
+                SongSubmission.elo_song_rating(compare,song1,song2)
         return song_submissions
-        

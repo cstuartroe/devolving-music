@@ -1,5 +1,6 @@
 # Python 3 program for Elo Rating
 import math
+
 # Function to calculate the probability
 def probability(rating1, rating2):
 	return 1.0 / (1 + float(math.pow(10, float((rating1 - rating2)) / 400)))
@@ -7,6 +8,10 @@ def probability(rating1, rating2):
 # k is a constant that determines how much you can gain or lose in one match .
 # d is 1 when player A wins 0 when they loseSS
 def elo_rating(ra, rb, k, d):
+	if(ra==None):
+		ra=0
+	if(rb==None):
+		rb=0
 	pb = probability(ra, rb)
 	pa = probability(rb, ra)
 	# Case When Player A wins

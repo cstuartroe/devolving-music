@@ -5,6 +5,7 @@ from .song import Song
 from devolving_music.lib.elo_scoring import elo_rating
 from django.utils.functional import cached_property
 from bisect import bisect_left
+
 class SongSubmission(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     song = models.ForeignKey(Song, on_delete=models.CASCADE)

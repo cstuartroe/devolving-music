@@ -78,6 +78,7 @@ class SongSubmission(models.Model):
         if i != len(song_submissions) and song_submissions[i] == song:
             return i
         raise ValueError
+
     @staticmethod
     def find_submission_index(compare:"SongComparison",song_submissions:Iterable["SongSubmission"]):
         song_index_1=SongSubmission.submission_index(song_submissions,compare.first_submission)
@@ -86,6 +87,8 @@ class SongSubmission(models.Model):
     
     @staticmethod
     def get_scores(comparison_submissions:Iterable["SongComparison"],song_submissions:Iterable["SongSubmission"]):
+        #song_submissions song_submissions should be a list of song submissions ordered from least to greatest 
+        # by songsubmission id
         for compare in comparison_submissions:
             song1_index,song2_index=SongSubmission.find_submission_index(compare,song_submissions)
             song1=song_submissions[song1_index]

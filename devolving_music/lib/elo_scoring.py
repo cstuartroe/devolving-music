@@ -8,20 +8,20 @@ def probability(rating1, rating2):
 # k is a constant that determines how much you can gain or lose in one match .
 # d is 1 when player A wins 0 when they loseSS
 def elo_rating(ra, rb, k, d):
-	if(ra==None):
-		ra=0
-	if(rb==None):
-		rb=0
+	if ra is None:
+		ra = 0
+	if rb is None:
+		rb = 0
 	pb = probability(ra, rb)
 	pa = probability(rb, ra)
 	# Case When Player A wins
 	# Updating the Elo Ratings
-	if (d == 1) :
+	if d == 1:
 		ra = ra + k * (1 - pa)
-		rb= rb+ k * (0 - pb)
+		rb = rb + k * (0 - pb)
 	# Case When Player B wins
 	# Updating the Elo Ratings
-	else :
+	else:
 		ra = ra + k * (0 - pa)
-		rb= rb+ k * (1 - pb)
-	return ra,rb
+		rb = rb + k * (1 - pb)
+	return ra, rb

@@ -1,11 +1,13 @@
-from sqlite3 import IntegrityError
+from bisect import bisect_left
 from typing import Iterable
+
+from sqlite3 import IntegrityError
 from django.db import models
-from .event import Event
+from django.utils.functional import cached_property
+
 from .song import Song
 from devolving_music.lib.elo_scoring import elo_rating
-from django.utils.functional import cached_property
-from bisect import bisect_left
+from .event import Event
 
 class SongSubmission(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
@@ -82,9 +84,9 @@ class SongSubmission(models.Model):
 
     def submission_index(self, song_submissions: Iterable["SongSubmission"]):
         song_submissions = list(sub.id for sub in song_submissions)
-        'Locate the leftmost value exactly equal to x'
+        # Locate the leftmost value exactly equal to x
         i = bisect_left(song_submissions, self.id)
-        if i != len(song_submissions) and song_submissions[i] == self.id:
+        if (i != len(song_submissions) and song_submissions[i] == self.id):
             return i
         raise ValueError
 

@@ -95,3 +95,4 @@ class SongSubmission(models.Model):
             song2=song_submissions[song2_index]
             song_submissions[song1_index],song_submissions[song2_index]=SongSubmission.elo_song_rating(compare,song1,song2)
         return song_submissions
+        

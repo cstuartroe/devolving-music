@@ -1,6 +1,5 @@
 # Python 3 program for Elo Rating
 import math
-
 # Function to calculate the probability
 def probability(rating1, rating2):
 	return 1.0 / (1 + float(math.pow(10, float((rating1 - rating2)) / 400)))

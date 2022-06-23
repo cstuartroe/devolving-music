@@ -11,7 +11,7 @@ class SongComparison(models.Model):
    
     @staticmethod
     def get_event_comparisons(Event):
-        comparison_event_submissions = list(sub for sub in SongComparison.objects.select_related('first_submission').filter(first_submission__event__exact=Event).order_by('created_at'))
+        comparison_event_submissions = list(sub for sub in SongComparison.objects.select_related('first_submission').filter(first_submission__event__exact=Event).order_by('id'))
         return comparison_event_submissions
     
    

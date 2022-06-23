@@ -10,7 +10,6 @@ from .views.song_comparisons import SongComparisonsView
 from .views.get_song_pair import GetSongPairView
 from .views.unreviewed_duplication_flags import UnreviewedDuplicationFlagView
 
-
 class OptionalSlashRouter(routers.SimpleRouter):
     def __init__(self):
         super().__init__()

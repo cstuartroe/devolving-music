@@ -48,8 +48,6 @@ class SongScores():
             song1.post_peak_score, song2.post_peak_score = elo_rating(
                 song1.post_peak_score, song2.post_peak_score, score_range, comparison_submission.first_post_peakier)
 
-        else:
-            pass
 
     def get_scores(self):
 

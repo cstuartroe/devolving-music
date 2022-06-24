@@ -3,17 +3,9 @@ from bisect import bisect_left
 
 
 from devolving_music.lib.elo_scoring import elo_rating
-
-
 from devolving_music.models.event import Event
-
-
 from devolving_music.models.song_submission import SongSubmission
-
-
 from devolving_music.models.song_comparison import SongComparison
-
-
 from devolving_music.lib.score_object import ScoreSuite
 
 

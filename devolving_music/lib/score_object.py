@@ -12,7 +12,7 @@ class ScoreSuite():
 
     def __init__(self, song_sub: "SongSubmission"):
 
-        self.song_submission = song_sub
+        self.song_submission = song_sub.id
 
         self.energy_score = None
 

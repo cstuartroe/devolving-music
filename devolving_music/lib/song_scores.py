@@ -52,5 +52,66 @@ class SongScores():
             song2 = self.song_submissions[song2_index]
             self.song_submissions[song1_index], self.song_submissions[song2_index] = \
                 SongScores.update_song_rating(compare, song1, song2)
-            #pdb.set_trace()
         return self.song_submissions
+
+    @staticmethod
+    def get_info_sort(song_submissions_scored: Iterable["SongSubmission"]):
+        info_submissions = []
+        #sort by info_submissions=song_submissions_scored.info
+        return info_submissions
+
+    @staticmethod
+    def get_energy_sort(song_submissions_scored: Iterable["SongSubmission"]):
+        #song_submissions_scored is a list of song submissions
+        # that have been scored with current comparisons
+        #return song submission sorted from energy least to greatest
+        #complete this
+        #sorts by energy
+        return song_submissions_scored
+
+    @staticmethod
+    def get_peak_sort(song_submissions_scored : Iterable["SongSubmission"]):
+        #song_submissions_scored is a list of song submissions
+        # that have been scored with current comparisons
+        #sorts by peakyness
+        return song_submissions_scored
+
+    @staticmethod
+    def mvg_avg(song_submissions_sorted:Iterable["SongSubmission"]):
+        mvg_avg = [None]*len(song_submissions_sorted)
+        #song_submissions_scored is a list of song submissions
+        #that have been sorted into prepeak,peak,and post peak
+        #these prepeak, peak, and post posteak have each been sorted accordingly with energy
+        # that have been scored with current comparisons
+        #get a moving average corresponding to quality score
+        return mvg_avg
+
+    @staticmethod
+    def check_quality(song_submissions_sorted:Iterable["SongSubmission"],remove:int):
+        song_submissions_pruned = song_submissions_sorted
+        #do (song_submissions_sorted[i].quality_score - mvg_avg[i])
+        # for every song in score submission
+        # return n indices with smallest values 
+        #these indices are to be removed 
+        return song_submissions_pruned
+
+    @staticmethod
+    def get_final_list(comparison_submissions:Iterable["SongComparison"],
+        song_submissions : Iterable["SongSubmission"]):
+        scored_submissions = SongSubmission.get_scores(comparison_submissions, song_submissions)
+        # remove all song_submissions with no information
+        # sort by peakyness
+        # peaky_sorted_submissions=get_peak_sort(scored_submissions)
+        # Break peaky_sorted into two bing  pre peak and post peak
+        # energy_sorted=[get_energy_sort(prepeak),reverse(get_energy_sort(postpeak))]
+        # final_list = energy_sorted
+
+        final_list = []
+        return final_list
+
+    def get_quality_list(final_list : Iterable["SongSubmission"],length_limit=300):
+        final_quality_list = []
+        # if len(final_list) is above length limit
+        # remove_index=check_quality(final_list,len(energy_sorted)-lengthlimit)
+        #final_quality_list=remove(energy_sorted,remove_index)
+        return final_quality_list

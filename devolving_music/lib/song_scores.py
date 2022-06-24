@@ -13,7 +13,7 @@ class SongScores():
 
     def __init__(self, event: Event):
 
-        self.song_submissions = ScoreSuite.get_song_scores_dict(event)
+        self.song_score_dict = ScoreSuite.get_song_scores_dict(event)
 
         self.comparison_submissions = ScoreSuite.get_event_comparisons(event)
 
@@ -63,13 +63,13 @@ class SongScores():
 
             song2_index = compare.second_submission.id
 
-            song1 = self.song_submissions[song1_index]
+            song1 = self.song_score_dict[song1_index]
 
-            song2 = self.song_submissions[song2_index]
+            song2 = self.song_score_dict[song2_index]
 
             SongScores.update_song_rating(compare, song1, song2)
 
-        return self.song_submissions
+        return self.song_score_dict
 
     @staticmethod
     def get_info_sort(song_submissions_scored: Iterable["SongSubmission"]):

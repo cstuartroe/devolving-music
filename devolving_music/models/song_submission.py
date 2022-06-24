@@ -5,6 +5,7 @@ from django.db import models
 
 from .song import Song
 from devolving_music.lib.elo_scoring import elo_rating
+from devolving_music.lib.score_object import ScoreObject
 from .event import Event
 
 class SongSubmission(models.Model):
@@ -55,6 +56,14 @@ class SongSubmission(models.Model):
                 if sub.voteable()
             ]
         return voteable_submissions
+
+    @staticmethod
+    def get_voteable_submissions_dict(Event):
+        song_subs = SongSubmission.get_voteable_submissions(Event)
+        score_objects = list(ScoreObject(sub) for sub in song_subs)
+        song_subs_id = list(sub.id for sub in song_subs)
+        voteable_submissions_dict = dict(zip(song_subs_id , score_objects))
+        return voteable_submissions_dict
 
     @staticmethod
     def compare_logged(comparison_submission: "SongComparison",

@@ -40,9 +40,23 @@ class ScoreSuite():
         return string_output
 
     @staticmethod
+    def get_voteable_submissions(Event):
+
+        voteable_submissions = [
+            sub
+
+            for sub in SongSubmission.objects.filter(event__exact=Event).order_by('id')
+            if sub.voteable()
+
+        ]
+        return voteable_submissions
+
+
+
+    @staticmethod
     def get_song_scores_dict(Event):
 
-        song_subs = SongSubmission.get_voteable_submissions(Event)
+        song_subs = ScoreSuite.get_voteable_submissions(Event)
 
         score_objects = list(ScoreSuite(sub) for sub in song_subs)
 

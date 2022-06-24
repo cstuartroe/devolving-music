@@ -49,15 +49,3 @@ class SongSubmission(models.Model):
 
                 return False
         return True
-
-    @staticmethod
-    def get_voteable_submissions(Event):
-
-        voteable_submissions = [
-            sub
-
-            for sub in SongSubmission.objects.filter(event__exact=Event).order_by('id')
-            if sub.voteable()
-
-        ]
-        return voteable_submissions

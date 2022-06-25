@@ -2,18 +2,23 @@
 import math
 
 # Function to calculate the probability
-def probability(rating1, rating2):
-	return 1.0 / (1 + float(math.pow(10, float((rating1 - rating2)) / 400)))
+def probability(rating1, rating2,league_score_differnce):
+	return 1.0 / (1 + float(math.pow(10, float((rating1 - rating2)) / league_score_differnce)))
 # Function to calculate Elo rating
 # k is a constant that determines how much you can gain or lose in one match .
 # d is 1 when player A wins 0 when they loseSS
-def elo_rating(ra, rb, k, d):
+# league score difference determines how large your difference in rating has to be 
+	# before you are considered to be in a different league
+	# for example if your league score difference is 400
+	# leagues  could look like this 
+	# crappy garbage:-800 bronze=-400 gold=0 silver:400 really really good:800
+def elo_rating(ra, rb, k, d,league_score_differnce=400):
 	if ra is None:
 		ra = 0
 	if rb is None:
 		rb = 0
-	pb = probability(ra, rb)
-	pa = probability(rb, ra)
+	pb = probability(ra, rb,league_score_differnce)
+	pa = probability(rb, ra,league_score_differnce)
 	# Case When Player A wins
 	# Updating the Elo Ratings
 	if d == 1:

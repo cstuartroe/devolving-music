@@ -72,36 +72,22 @@ class SongScores():
         return self.song_score_dict
 
     @staticmethod
-    def get_info_sort(song_submissions_scored: Iterable["SongSubmission"]):
-
-        info_submissions = []
-
-        # sort by info_submissions=song_submissions_scored.info
+    def get_info_sort(song_dict: "dict[int, ScoreSuite]"):
+        info_submissions = sorted(song_dict,key=lambda sub: song_dict.get(sub).info_score)
+        # return list of keys of dictionary of song objects sorted by info
         return info_submissions
 
     @staticmethod
-    def get_energy_sort(song_submissions_scored: Iterable["SongSubmission"]):
-
-        # song_submissions_scored is a list of song submissions
-
-        # that have been scored with current comparisons
-
-        # return song submission sorted from energy least to greatest
-
-        # complete this
-
-        # sorts by energy
-        return song_submissions_scored
+    def get_energy_sort(song_dict: "dict[int, ScoreSuite]"):
+        energy_submissions = sorted(song_dict,key=lambda sub: song_dict.get(sub).energy_score)
+        # return list of keys of dictionary of song objects sorted by energy
+        return energy_submissions
 
     @staticmethod
-    def get_peak_sort(song_submissions_scored: Iterable["SongSubmission"]):
-
-        # song_submissions_scored is a list of song submissions
-
-        # that have been scored with current comparisons
-
-        # sorts by peakyness
-        return song_submissions_scored
+    def get_peak_sort(song_dict: "dict[int, ScoreSuite]"):
+        peak_submissions = sorted(song_dict,key=lambda sub: song_dict.get(sub).post_peak_score)
+        # return list of keys of dictionary of song objects sorted by peakyness
+        return peak_submissions
 
     @staticmethod
     def mvg_avg(song_submissions_sorted: Iterable["SongSubmission"]):

@@ -1,3 +1,4 @@
+from cmath import inf
 from typing import Iterable
 from bisect import bisect_left
 
@@ -70,22 +71,25 @@ class SongScores():
             SongScores.update_song_rating(compare, song1, song2)
 
         return self.song_score_dict
-
+    
     @staticmethod
+    #sorts in ascending order
     def get_info_sort(song_dict: "dict[int, ScoreSuite]"):
         info_submissions = sorted(song_dict,key=lambda sub: song_dict.get(sub).info_score)
         # return list of keys of dictionary of song objects sorted by info
         return info_submissions
 
     @staticmethod
+    #sorts in ascending order
     def get_energy_sort(song_dict: "dict[int, ScoreSuite]"):
-        energy_submissions = sorted(song_dict,key=lambda sub: song_dict.get(sub).energy_score)
+        energy_submissions = sorted(song_dict,key=lambda sub: song_dict.get(sub).energy_score if song_dict.get(sub).energy_score is not None else -inf)
         # return list of keys of dictionary of song objects sorted by energy
         return energy_submissions
-
+        
     @staticmethod
+    #sorts in ascending order
     def get_peak_sort(song_dict: "dict[int, ScoreSuite]"):
-        peak_submissions = sorted(song_dict,key=lambda sub: song_dict.get(sub).post_peak_score)
+        peak_submissions = sorted(song_dict,key=lambda sub: song_dict.get(sub).post_peak_score  if song_dict.get(sub).post_peak_score is not None else -inf)
         # return list of keys of dictionary of song objects sorted by peakyness
         return peak_submissions
 
@@ -95,14 +99,10 @@ class SongScores():
         mvg_avg = [None] * len(song_submissions_sorted)
 
         # song_submissions_scored is a list of song submissions
-
         # that have been sorted into prepeak,peak,and post peak
-
         # these prepeak, peak, and post posteak have each been sorted
         # accordingly with energy
-
         # that have been scored with current comparisons
-
         # get a moving average corresponding to quality score
 
         return mvg_avg
@@ -115,48 +115,51 @@ class SongScores():
         song_submissions_pruned = song_submissions_sorted
 
         # do (song_submissions_sorted[i].quality_score - mvg_avg[i])
-
         # for every song in score submission
-
         # return n indices with smallest values
-
         # these indices are to be removed
+
         return song_submissions_pruned
 
-    @staticmethod
-    def get_final_list(comparison_submissions: Iterable["SongComparison"],
+    def get_dict_from_keys(self, new_keys):
+        new_dict=dict()
+        new_dict={key: self.song_score_dict[key] for key in new_keys}
+        return new_dict
+    
+    def get_final_list(self):
 
-
-                       song_submissions: Iterable["SongSubmission"]):
-
-        scored_submissions = SongSubmission.get_scores(
-            comparison_submissions, song_submissions)
-
+        scored_submissions = self.get_scores().copy()
+        
         # remove all song_submissions with no information
+        info_list = SongScores.get_info_sort(scored_submissions)
+        for sub_info in info_list:
+            i_score = scored_submissions[sub_info].info_score
+            if(i_score == 0):
+                del scored_submissions[sub_info]
+            else:
+                break
+        # sort by postpeakyness
+        peaky_list = SongScores.get_peak_sort(scored_submissions)
+        peak_loc = int(0.7*len(peaky_list))
+        # Break peaky_sorted into two bins pre peak and post peak
+        pre_peak = self.get_dict_from_keys(peaky_list[:peak_loc])
+        post_peak = self.get_dict_from_keys(peaky_list[peak_loc:])
+        # energy_sorted
+        comeup = SongScores.get_energy_sort(pre_peak)
+        cooldown = SongScores.get_energy_sort(post_peak)
+        cooldown = cooldown[::-1]
 
-        # sort by peakyness
+        # final_list
+        final_list = comeup + cooldown
+        return self.get_dict_from_keys(final_list)
 
-        # peaky_sorted_submissions=get_peak_sort(scored_submissions)
-
-        # Break peaky_sorted into two bing  pre peak and post peak
-
-        # energy_sorted=[get_energy_sort(prepeak),reverse(get_energy_sort(postpeak))]
-
-        # final_list = energy_sorted
-
-        final_list = []
-        return final_list
-
-    def get_quality_list(
-            final_list: Iterable["SongSubmission"],
+    def get_quality_list(self,
             length_limit=300):
 
         final_quality_list = []
 
         # if len(final_list) is above length limit
-
         # remove_index=check_quality(final_list,len(energy_sorted)-lengthlimit)
-
         # final_quality_list=remove(energy_sorted,remove_index)
 
         return final_quality_list

@@ -12,13 +12,13 @@ def probability(rating1, rating2,league_score_differnce):
 	# for example if your league score difference is 400
 	# leagues  could look like this 
 	# crappy garbage:-800 bronze=-400 gold=0 silver:400 really really good:800
-def elo_rating(ra, rb, k, d,league_score_differnce=400):
+def elo_rating(ra, rb, k, d,league_score_difference=400):
 	if ra is None:
 		ra = 0
 	if rb is None:
 		rb = 0
-	pb = probability(ra, rb,league_score_differnce)
-	pa = probability(rb, ra,league_score_differnce)
+	pb = probability(ra, rb,league_score_difference)
+	pa = probability(rb, ra,league_score_difference)
 	# Case When Player A wins
 	# Updating the Elo Ratings
 	if d == 1:

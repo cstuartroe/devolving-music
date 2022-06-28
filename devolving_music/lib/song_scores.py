@@ -149,16 +149,17 @@ class SongScores():
         cooldown = SongScores.get_energy_sort(post_peak)
         cooldown = cooldown[::-1]
 
-        # final_list
+        # final_list is the song submission keys properly sorted
         final_list = comeup + cooldown
-        return self.get_dict_from_keys(final_list)
+
+        return final_list
 
     def get_quality_list(self,
             length_limit=300):
 
         final_quality_list = []
 
-        # if len(final_list) is above length limit
+        # if len(final_list) is above length limit 
         # remove_index=check_quality(final_list,len(energy_sorted)-lengthlimit)
         # final_quality_list=remove(energy_sorted,remove_index)
 

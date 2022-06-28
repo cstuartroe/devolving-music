@@ -2,8 +2,8 @@
 import math
 
 # Function to calculate the probability
-def probability(rating1, rating2,league_score_differnce):
-	return 1.0 / (1 + float(math.pow(10, float((rating1 - rating2)) / league_score_differnce)))
+def probability(rating1, rating2,league_score_difference):
+	return 1.0 / (1 + float(math.pow(10, float((rating1 - rating2)) / league_score_difference)))
 # Function to calculate Elo rating
 # k is a constant that determines how much you can gain or lose in one match .
 # d is 1 when player A wins 0 when they loseSS

@@ -21,7 +21,7 @@ class GetSongPairView(View):
         Scores = SongScores(event)
         Scores_list = Scores.get_scores()
         info_list = SongScores.get_info_sort(Scores_list)
-        sub2_id = Scores.get_compare_submission(info_list[0])
+        sub2_id = Scores.get_compare_submission_linear(info_list[0])
 
 
         #grab submission with least ammount of information

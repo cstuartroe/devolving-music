@@ -124,7 +124,7 @@ class SongScores():
     #sorts in ascending order
     def get_info_sort(song_dict: "dict[int, ScoreSuite]"):
         info_submissions = sorted(song_dict,key=lambda sub: song_dict.get(sub).info_score)
-        rightend=-1
+        rightend=0
         for sub in info_submissions:
             init=song_dict.get(info_submissions[0]).info_score
             sub_info=song_dict.get(sub).info_score

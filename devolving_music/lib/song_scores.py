@@ -7,8 +7,9 @@ from devolving_music.lib.elo_scoring import elo_rating
 from devolving_music.models.event import Event
 from devolving_music.models.song_submission import SongSubmission
 from devolving_music.models.song_comparison import SongComparison
-from devolving_music.lib.score_object import ScoreSuite
+from devolving_music.lib.score_suite import ScoreSuite
 
+PEAK_PROPORTION=0.7
 
 class SongScores():
 
@@ -19,34 +20,26 @@ class SongScores():
     def get_scores(self):
         #calculates scores for all submissions using current comparisons
         for compare in self.comparison_submissions:
-            song1_index = compare.first_submission.id
-            song2_index = compare.second_submission.id
-            song1 = self.song_score_dict[song1_index]
-            song2 = self.song_score_dict[song2_index]
+            song_suite_1 = self.song_score_dict[compare.first_submission.id]
+            song_suite_2 = self.song_score_dict[compare.second_submission.id]
 
-            SongScores.update_song_rating(compare, song1, song2)
+            SongScores.update_song_rating(compare, song_suite_1, song_suite_2)
 
         return self.song_score_dict
     
-    def get_compare_submission_random(self, submission_key):
+    def get_compare_submission_random(self, submission_id):
         key_list = list(self.song_score_dict.keys())
-        key_list.remove(submission_key)
+        key_list.remove(submission_id)
         # once you have a critical number of comparisons then pull from quality list
         return random.choice(key_list)
 
-    def get_compare_submission_linear(self, submission_key):
-        compare_list = self.comparison_submissions
-        if(len(compare_list)==0):
-            return self.get_compare_submission_random(submission_key)
-        first_sub_id=compare_list[-1].first_submission.id
-        if(submission_key==first_sub_id):
-            return self.get_compare_submission_random(submission_key)
-        return first_sub_id
-
-        # once you have a critical number of comparisons then pull from quality list
-        return random.choice(key_list)
-
-
+    def get_compare_submission(self, submission_id):
+        if(len(self.comparison_submissions)==0):
+            return self.get_compare_submission_random(submission_id)
+        first_recent_id=self.comparison_submissions[-1].first_submission.id
+        if(submission_id==first_recent_id):
+            return self.get_compare_submission_random(submission_id)
+        return first_recent_id
 
     def mvg_avg(self,song_submissions_sorted: Iterable["SongSubmission"]):
         mvg_avg = [None] * len(song_submissions_sorted)
@@ -74,9 +67,7 @@ class SongScores():
         return song_submissions_pruned
 
     def get_dict_from_keys(self, new_keys):
-        new_dict=dict()
-        new_dict={key: self.song_score_dict[key] for key in new_keys}
-        return new_dict
+        return {key: self.song_score_dict[key] for key in new_keys}
     
     def get_final_list(self):
 
@@ -92,7 +83,7 @@ class SongScores():
                 break
         # sort by postpeakyness
         peaky_list = SongScores.get_peak_sort(scored_submissions)
-        peak_loc = int(0.7*len(peaky_list))
+        peak_loc = int(PEAK_PROPORTION*len(peaky_list))
         # Break peaky_sorted into two bins pre peak and post peak
         pre_peak = self.get_dict_from_keys(peaky_list[:peak_loc])
         post_peak = self.get_dict_from_keys(peaky_list[peak_loc:])
@@ -157,16 +148,16 @@ class SongScores():
     @staticmethod
     def compare_not_found(
             comparison_submission: "SongComparison",
-            song1: "ScoreObject",
-            song2: "ScoreObject"):
+            song1: "ScoreSuite",
+            song2: "ScoreSuite"):
 
         return not song1.compare_present(comparison_submission) and not song2.compare_present(comparison_submission)
 
     @staticmethod
     def update_song_rating(
             comparison_submission: "SongComparison",
-            song1: "ScoreObject",
-            song2: "ScoreObject",
+            song1: "ScoreSuite",
+            song2: "ScoreSuite",
             score_range=30):
 
         if SongScores.compare_not_found(comparison_submission, song1, song2):

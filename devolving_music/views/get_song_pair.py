@@ -1,6 +1,6 @@
 from django.views import View
 
-from devolving_music.lib.score_object import ScoreSuite
+from devolving_music.lib.score_suite import ScoreSuite
 from devolving_music.lib.song_scores import SongScores
 from .param_utils import safe_url_params, success, failure
 from devolving_music.lib.song_utils import get_song_color
@@ -18,10 +18,10 @@ class GetSongPairView(View):
         if len(voteable_submissions) < 2:
             return failure("Not enough songs have been submitted for this event.")
 
-        Scores = SongScores(event)
-        Scores_list = Scores.get_scores()
-        info_list = SongScores.get_info_sort(Scores_list)
-        sub2_id = Scores.get_compare_submission_linear(info_list[0])
+        scores = SongScores(event)
+        scores_list = scores.get_scores()
+        info_list = SongScores.get_info_sort(scores_list)
+        sub2_id = scores.get_compare_submission(info_list[0])
 
 
         #grab submission with least ammount of information

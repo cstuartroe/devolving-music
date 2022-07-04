@@ -17,7 +17,7 @@ class SongScores():
         self.song_score_dict = ScoreSuite.get_song_scores_dict(event)
         self.comparison_submissions = ScoreSuite.get_event_comparisons(event)
 
-    def get_scores(self):
+    def get_scores(self) -> "dict[int, ScoreSuite]":
         #calculates scores for all submissions using current comparisons
         for compare in self.comparison_submissions:
             song_suite_1 = self.song_score_dict[compare.first_submission.id]
@@ -27,13 +27,13 @@ class SongScores():
 
         return self.song_score_dict
     
-    def get_compare_submission_random(self, submission_id):
+    def get_compare_submission_random(self, submission_id) -> int:
         key_list = list(self.song_score_dict.keys())
         key_list.remove(submission_id)
         # once you have a critical number of comparisons then pull from quality list
         return random.choice(key_list)
 
-    def get_compare_submission(self, submission_id):
+    def get_compare_submission(self, submission_id) -> int:
         if(len(self.comparison_submissions)==0):
             return self.get_compare_submission_random(submission_id)
         first_recent_id=self.comparison_submissions[-1].first_submission.id
@@ -41,7 +41,7 @@ class SongScores():
             return self.get_compare_submission_random(submission_id)
         return first_recent_id
 
-    def mvg_avg(self,song_submissions_sorted: Iterable["SongSubmission"]):
+    def mvg_avg(self,song_submissions_sorted: Iterable["ScoreSuite"]) -> Iterable[int]:
         mvg_avg = [None] * len(song_submissions_sorted)
 
         # song_submissions_scored is a list of song submissions
@@ -54,8 +54,8 @@ class SongScores():
         return mvg_avg
 
     def check_quality(self,
-            song_submissions_sorted: Iterable["SongSubmission"],
-            remove: int):
+            song_submissions_sorted: Iterable["ScoreSuite"],
+            remove: int) -> Iterable["ScoreSuite"]:
 
         song_submissions_pruned = song_submissions_sorted
 
@@ -66,27 +66,24 @@ class SongScores():
 
         return song_submissions_pruned
 
-    def get_dict_from_keys(self, new_keys):
+    def get_dict_from_keys(self, new_keys) -> "dict[int, ScoreSuite]":
         return {key: self.song_score_dict[key] for key in new_keys}
     
-    def get_final_list(self):
+    def get_final_list(self) -> Iterable["ScoreSuite"]:
 
-        scored_submissions = self.get_scores().copy()
+        scored_submissions = list(self.get_scores().values())
         
         # remove all song_submissions with no information
         info_list = SongScores.get_info_sort(scored_submissions)
-        for sub_info in info_list:
-            i_score = scored_submissions[sub_info].info_score
-            if(i_score == 0):
-                del scored_submissions[sub_info]
-            else:
-                break
+      
+        informed_list = list(filter(lambda sub: sub.info_score > 0, info_list))
+
         # sort by postpeakyness
-        peaky_list = SongScores.get_peak_sort(scored_submissions)
+        peaky_list = SongScores.get_peak_sort(informed_list)
         peak_loc = int(PEAK_PROPORTION*len(peaky_list))
         # Break peaky_sorted into two bins pre peak and post peak
-        pre_peak = self.get_dict_from_keys(peaky_list[:peak_loc])
-        post_peak = self.get_dict_from_keys(peaky_list[peak_loc:])
+        pre_peak = peaky_list[:peak_loc]
+        post_peak = peaky_list[peak_loc:]
         # energy_sorted
         comeup = SongScores.get_energy_sort(pre_peak)
         cooldown = SongScores.get_energy_sort(post_peak)
@@ -98,7 +95,7 @@ class SongScores():
         return final_list
 
     def get_quality_list(self,
-            length_limit=300):
+            length_limit=300) -> Iterable["ScoreSuite"]:
 
         final_quality_list = []
 
@@ -113,19 +110,21 @@ class SongScores():
     ###
     @staticmethod
     #sorts in ascending order
-    def get_info_sort(song_dict: "dict[int, ScoreSuite]"):
-        info_submissions = sorted(song_dict,key=lambda sub: song_dict.get(sub).info_score)
+    def get_info_sort(score_suite_list: Iterable["ScoreSuite"]) -> Iterable["ScoreSuite"]:
+        score_suite_list.sort(key=lambda sub: sub.info_score)
         rightend=0
-        for sub in info_submissions:
-            init=song_dict.get(info_submissions[0]).info_score
-            sub_info=song_dict.get(sub).info_score
+        init=score_suite_list[0].info_score
+
+        for sub in score_suite_list:
+            sub_info=sub.info_score
             if sub_info==init:
                 rightend+=1
             else:
                 break 
-        lowest_info = info_submissions[0:rightend]
+
+        lowest_info = score_suite_list[0:rightend]
         random.shuffle(lowest_info)
-        other_info = info_submissions[rightend:]
+        other_info = score_suite_list[rightend:]
         info_submissions = lowest_info + other_info
 
         # return list of keys of dictionary of song objects sorted by info
@@ -133,23 +132,23 @@ class SongScores():
 
     @staticmethod
     #sorts in ascending order
-    def get_energy_sort(song_dict: "dict[int, ScoreSuite]"):
-        energy_submissions = sorted(song_dict,key=lambda sub: song_dict.get(sub).energy_score if song_dict.get(sub).energy_score is not None else -inf)
+    def get_energy_sort(score_suite_list: Iterable["ScoreSuite"]) -> Iterable["ScoreSuite"]:
+        score_suite_list.sort(key=lambda sub: sub.energy_score if sub.energy_score is not None else -inf)
         # return list of keys of dictionary of song objects sorted by energy
-        return energy_submissions
+        return score_suite_list
         
     @staticmethod
     #sorts in ascending order
-    def get_peak_sort(song_dict: "dict[int, ScoreSuite]"):
-        peak_submissions = sorted(song_dict,key=lambda sub: song_dict.get(sub).post_peak_score  if song_dict.get(sub).post_peak_score is not None else -inf)
-        # return list of keys of dictionary of song objects sorted by peakyness
-        return peak_submissions
+    def get_peak_sort(score_suite_list: Iterable["ScoreSuite"]) -> Iterable["ScoreSuite"]:
+        score_suite_list.sort(key=lambda sub: sub.post_peak_score if sub.post_peak_score is not None else -inf)
+        # return list of keys of dictionary of song objects sorted by energy
+        return score_suite_list
 
     @staticmethod
     def compare_not_found(
             comparison_submission: "SongComparison",
             song1: "ScoreSuite",
-            song2: "ScoreSuite"):
+            song2: "ScoreSuite") -> bool:
 
         return not song1.compare_present(comparison_submission) and not song2.compare_present(comparison_submission)
 
@@ -158,7 +157,7 @@ class SongScores():
             comparison_submission: "SongComparison",
             song1: "ScoreSuite",
             song2: "ScoreSuite",
-            score_range=30):
+            score_range=30) -> None:
 
         if SongScores.compare_not_found(comparison_submission, song1, song2):
 

@@ -12,7 +12,7 @@ class ScoreSuite():
 
     def __init__(self, song_sub: "SongSubmission"):
 
-        self.song_submission = song_sub.id
+        self.song_submission = song_sub
 
         self.energy_score = None
 
@@ -35,9 +35,9 @@ class ScoreSuite():
         return comparison.id in self.counted_compares
 
     def __str__(self):
-        song_sub=SongSubmission.objects.get(id__exact=self.song_submission)
-        song=song_sub.song
-        artist_list=list(musician.name for musician in song.artists.all())
+        song_sub = SongSubmission.objects.get(id__exact=self.song_submission.id)
+        song = song_sub.song
+        artist_list = list(musician.name for musician in song.artists.all())
         string_output = f"Song Submission ID: {song_sub.id} \n Song: {song.title} by {artist_list} \n Energy Score: {self.energy_score}\n Quality Score: {self.quality_score} \n Post Peak Score: {self.post_peak_score}\n Info Score: {self.info_score} "
         return string_output
 

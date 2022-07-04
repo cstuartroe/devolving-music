@@ -35,7 +35,7 @@ class SongScores():
         # list
         return random.choice(key_list)
 
-    def get_compare_submission(self, submission_id) -> int:
+    def get_compare_submission_linear(self, submission_id) -> int:
         if(len(self.comparison_submissions) == 0):
             return self.get_compare_submission_random(submission_id)
         first_recent_id = self.comparison_submissions[-1].first_submission.id

@@ -116,6 +116,11 @@ class SongScores():
     # sorts in ascending order
     def get_info_sort(
             score_suite_list: Iterable["ScoreSuite"]) -> Iterable["ScoreSuite"]:
+        """
+        Returns a list of song suites ordered by low information songs with the lowest information score 
+        are randomly shuffled before being added to the list
+        
+        """
         score_suite_list.sort(key=lambda sub: sub.info_score)
         rightend = 0
         init = score_suite_list[0].info_score

@@ -35,7 +35,8 @@ class ScoreSuite():
         return comparison.id in self.counted_compares
 
     def __str__(self):
-        song_sub = SongSubmission.objects.get(id__exact=self.song_submission.id)
+        song_sub = SongSubmission.objects.get(
+            id__exact=self.song_submission.id)
         song = song_sub.song
         artist_list = list(musician.name for musician in song.artists.all())
         string_output = f"Song Submission ID: {song_sub.id} \n Song: {song.title} by {artist_list} \n Energy Score: {self.energy_score}\n Quality Score: {self.quality_score} \n Post Peak Score: {self.post_peak_score}\n Info Score: {self.info_score} "
@@ -52,8 +53,6 @@ class ScoreSuite():
 
         ]
         return voteable_submissions
-
-
 
     @staticmethod
     def get_song_scores_dict(Event):

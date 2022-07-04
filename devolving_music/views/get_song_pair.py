@@ -16,7 +16,8 @@ class GetSongPairView(View):
         voteable_submissions = ScoreSuite.get_voteable_submissions(event)
 
         if len(voteable_submissions) < 2:
-            return failure("Not enough songs have been submitted for this event.")
+            return failure(
+                "Not enough songs have been submitted for this event.")
 
         scores = SongScores(event)
         scores_list = scores.get_scores()
@@ -25,11 +26,10 @@ class GetSongPairView(View):
         sub1_id = info_list[0].song_submission.id
         sub2_id = scores.get_compare_submission(sub1_id)
 
-
-        #grab submission with least ammount of information
-        sub1 = SongSubmission.objects.get(id = sub1_id)
-        #grab random submission
-        sub2 = SongSubmission.objects.get(id = sub2_id)
+        # grab submission with least ammount of information
+        sub1 = SongSubmission.objects.get(id=sub1_id)
+        # grab random submission
+        sub2 = SongSubmission.objects.get(id=sub2_id)
 
         return success({
             "sub1": SongSubmissionSerializer(sub1).data,

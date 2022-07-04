@@ -28,14 +28,14 @@ class SongScores():
 
         return self.song_score_dict
 
-    def get_compare_submission_random(self, submission_id) -> ScoreSuite:
+    def get_compare_submission_random(self, submission_id) -> SongSubmission:
         key_list = list(self.song_score_dict.keys())
         key_list.remove(submission_id)
         # once you have a critical number of comparisons then pull from quality
         # list
         return self.song_score_dict.get(random.choice(key_list)).song_submission
 
-    def get_compare_submission_linear(self, submission_id) -> ScoreSuite:
+    def get_compare_submission_linear(self, submission_id) -> SongSubmission:
         if(len(self.comparison_submissions) == 0):
             return self.get_compare_submission_random(submission_id)
         first_recent = self.comparison_submissions[-1].first_submission

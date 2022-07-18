@@ -4,7 +4,6 @@ from devolving_music.lib.youtube import get_youtube_playlist_videos
 from .param_utils import safe_json_params, success, failure
 from devolving_music.models.event import Event
 from devolving_music.models.song import Song
-from devolving_music.models.song_submission import SongSubmission
 from devolving_music.models.serializers.song_submission import SongSubmissionSerializer
 from devolving_music.lib.song_submission_utils import submit_song
 

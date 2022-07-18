@@ -1,14 +1,8 @@
-from devolving_music.lib.elo_scoring import elo_rating
-
-
-from devolving_music.models.event import Event
-
 from devolving_music.models.song_submission import SongSubmission
-
 from devolving_music.models.song_comparison import SongComparison
 
 
-class ScoreSuite():
+class ScoreSuite:
 
     def __init__(self, song_sub: "SongSubmission"):
 

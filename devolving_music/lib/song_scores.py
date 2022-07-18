@@ -1,5 +1,5 @@
 from cmath import inf
-from typing import Iterable, List
+from typing import List
 import random
 
 
@@ -11,6 +11,7 @@ from devolving_music.lib.score_suite import ScoreSuite
 
 PEAK_PROPORTION = 0.7
 INFO_THRESHOLD = 1
+
 
 class SongScores():
 

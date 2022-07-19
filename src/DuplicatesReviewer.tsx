@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Event, DuplicationFlag, DuplicationFlag_status } from "./models";
 import ResourceManager from "./ResourceManager";
-import SongPairTile from "./SongPairTile";
+import SongsTile from "./SongsTile";
 import { safePost } from "./utils";
 
 type VoterProps = {
@@ -101,7 +101,7 @@ export default class DuplicatesReviewer extends Component<Props, State> {
             <div className="col-12">
               <h2>Are these songs duplicates?</h2>
             </div>
-            <SongPairTile sub1={flag.existing_submission} sub2={flag.new_submission}/>
+            <SongsTile subs={[flag.existing_submission, flag.new_submission]}/>
             <DuplicatesVoter flag_id={flag.id}/>
           </div>
         ))}

@@ -41,14 +41,7 @@ a, a:hover {
     background-color: white;
     color: black;
     margin-bottom: 20px;
-}
-
-.header-logo {
-    text-align: center;
-    padding: 2vh;
-    font-family: "YourDreams", fantasy;
-    font-size: 30px;
-    white-space: pre-line;
+    display: flex;
 }
 
 .header a, .platform-tile a {
@@ -56,8 +49,17 @@ a, a:hover {
     text-decoration: inherit;
 }
 
-.menu-item a {
-    font-size: 28px;
+.menu-item {
+    flex: 1;
+
+    a {
+        font-size: 28px;
+    }
+
+    &:hover {
+        background-color: black;
+        color: white;
+    }
 }
 
 .menu-item a, .platform-tile a, .event-card-inner {
@@ -68,12 +70,17 @@ a, a:hover {
 
 .menu-item a, .platform-tile a {
     padding-bottom: 10px;
-    display: flex;
 }
 
-.menu-item:hover {
-    background-color: black;
-    color: white;
+.header-logo {
+    text-align: center;
+    padding: 2vh;
+
+    a {
+        font-family: "YourDreams", fantasy;
+        font-size: 30px;
+        white-space: pre-line;
+    }
 }
 
 .event-card {

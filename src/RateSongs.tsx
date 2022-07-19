@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { safePost } from "./utils";
 import {Event, SongSubmission} from "./models";
-import SongPairTile from "./SongPairTile";
+import SongsTile from "./SongsTile";
 
 
 const questionIds = ["first_better", "first_peakier", "first_post_peakier"] as const;
@@ -113,8 +113,10 @@ export default class RateSongs extends Component<Props, State> {
             <img src="/static/img/spinner.gif" alt="Please wait a moment."/>
           </div>
         );
+      } else if (sub1 === undefined || sub2 === undefined) {
+        return null;
       } else {
-        return <SongPairTile sub1={sub1} sub2={sub2}/>;
+        return <SongsTile subs={[sub1, sub2]}/>;
       }
     }
 

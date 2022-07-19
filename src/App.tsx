@@ -12,7 +12,7 @@ import ChoosePlatform from "./ChoosePlatform";
 import SubmitPlaylist from "./SubmitPlaylist";
 import RateSongs from "./RateSongs";
 import DuplicatesReviewer from "./DuplicatesReviewer";
-import FinalPlaylist from "./FinalPlaylist";
+import CurrentPlaylist from "./CurrentPlaylist";
 
 
 const event_key = "selected_event";
@@ -85,7 +85,7 @@ class App extends Component<{}, AppState> {
 
                     <Route path="duplicates" element={<DuplicatesReviewer event={event}/>}/>
 
-                    <Route path="final_playlist" element={<FinalPlaylist event={event}/>}/>
+                    <Route path="current_playlist" element={<CurrentPlaylist event={event}/>}/>
 
                     <Route path="*" element={<Navigate replace to="/"/>}/>
                   </Route>

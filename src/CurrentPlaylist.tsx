@@ -18,7 +18,7 @@ type State = {
   song_scores: SongScore[],
 }
 
-export default class FinalPlaylist extends Component<Props, State> {
+export default class CurrentPlaylist extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
@@ -28,7 +28,7 @@ export default class FinalPlaylist extends Component<Props, State> {
   }
 
   componentDidMount() {
-    fetch(`/api/final_playlist?event=${this.props.event.id}`)
+    fetch(`/api/current_playlist?event=${this.props.event.id}`)
       .then(res => res.json())
       .then(data => this.setState({
         song_scores: data.results,
@@ -37,7 +37,7 @@ export default class FinalPlaylist extends Component<Props, State> {
 
   render() {
     return (
-      <div className="row final-playlist">
+      <div className="row current-playlist">
         {this.state.song_scores.map((score, i) => (
           <SongsTile subs={[score.song_submission]} key={i}/>
         ))}

@@ -5,7 +5,7 @@ from devolving_music.lib.song_scores import SongScores
 from .param_utils import success, safe_url_params
 
 
-class FinalPlaylist(View):
+class CurrentPlaylist(View):
     @safe_url_params
     def get(self, _request, event: Event):
         return success([

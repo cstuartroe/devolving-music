@@ -20,17 +20,13 @@ export default class Header extends Component<HeaderProps, HeaderState>{
     };
   }
 
-  itemWidth() {
-    return this.state.events.length > 1 ? 3 : 4;
-  }
-
   componentDidMount() {
     ResourceManager.getModels("events").then(events => this.setState({events}))
   }
 
   renderMenuItem(to: string, text: string) {
     return (
-      <div className={`col-${this.itemWidth()} menu-item`}>
+      <div className={`menu-item`}>
         <Link to={to} className="center">
           {text}
         </Link>
@@ -41,7 +37,7 @@ export default class Header extends Component<HeaderProps, HeaderState>{
   render() {
     return (
       <div className="row header">
-        <div className={`col-${this.itemWidth()}`}>
+        <div className={`menu-item`}>
           <div className="header-logo">
             <Link to="/">
               {this.props.event.name.toLowerCase().replace(':', '\n')}
@@ -51,6 +47,7 @@ export default class Header extends Component<HeaderProps, HeaderState>{
         {this.state.events.length > 1 && this.renderMenuItem("/event-selector", "Switch events")}
         {this.renderMenuItem("/submit-playlist", "Submit songs")}
         {this.renderMenuItem("/rate", "Rate songs")}
+        {this.renderMenuItem("/current_playlist", "Current Playlist")}
       </div>
     );
   }

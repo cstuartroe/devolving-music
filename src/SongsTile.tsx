@@ -41,17 +41,12 @@ function byline(song: Song) {
 }
 
 type Props = {
-  sub1?: SongSubmission,
-  sub2?: SongSubmission,
+  subs: SongSubmission[],
 }
 
-export default class SongPairTile extends Component<Props, {}> {
+export default class SongsTile extends Component<Props, {}> {
   render() {
-    const { sub1, sub2 } = this.props;
-
-    if (sub1 === undefined || sub2 === undefined) {
-      return null;
-    }
+    const { subs } = this.props;
 
     const outerStyle = {display: "flex", justifyContent: "space-around"};
     const style = {flex: 1};
@@ -59,18 +54,21 @@ export default class SongPairTile extends Component<Props, {}> {
     return (
       <div className="col-12">
         <div style={outerStyle}>
-          <h2 style={style}>{sub1.song.title}</h2>
-          <h2 style={style}>{sub2.song.title}</h2>
+          {subs.map((sub, i) => (
+            <h2 style={style} key={i}>{sub.song.title}</h2>
+          ))}
         </div>
 
         <div style={outerStyle}>
-          <p style={style}>{byline(sub1.song)}</p>
-          <p style={style}>{byline(sub2.song)}</p>
+          {subs.map((sub, i) => (
+            <p style={style} key={i}>{byline(sub.song)}</p>
+          ))}
         </div>
 
         <div style={outerStyle}>
-          <div style={{...style, padding: "1vw"}}>{Embed(sub1.song)}</div>
-          <div style={{...style, padding: "1vw"}}>{Embed(sub2.song)}</div>
+          {subs.map((sub, i) => (
+            <div style={{...style, padding: "1vw"}} key={i}>{Embed(sub.song)}</div>
+          ))}
         </div>
       </div>
     );

@@ -1,3 +1,4 @@
+from devolving_music.models.serializers.song_submission import SongSubmissionSerializer
 from devolving_music.models.song_submission import SongSubmission
 from devolving_music.models.song_comparison import SongComparison
 
@@ -34,6 +35,14 @@ class ScoreSuite:
         artist_list = list(musician.name for musician in song.artists.all())
         string_output = f"Song Submission ID: {song_sub.id} \n Song: {song.title} by {artist_list} \n Energy Score: {self.energy_score}\n Quality Score: {self.quality_score} \n Post Peak Score: {self.post_peak_score}\n Info Score: {self.info_score} "
         return string_output
+
+    def to_json(self):
+        return {
+            "song_submission": SongSubmissionSerializer(self.song_submission).data,
+            "energy_score": self.energy_score,
+            "quality_score": self.quality_score,
+            "post_peak_score": self.post_peak_score,
+        }
 
     @staticmethod
     def get_voteable_submissions(Event):

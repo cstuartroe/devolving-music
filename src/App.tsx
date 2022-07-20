@@ -73,7 +73,7 @@ class App extends Component<{}, AppState> {
                     />
 
                     <Route path="submit-playlist">
-                      <Route index element={<ChoosePlatform/>}/>
+                      <Route index element={<ChoosePlatform event={event}/>}/>
                       {Artist_platform.map(platform => (
                         <Route path={platform} key={platform} element={
                           <SubmitPlaylist platform={platform} event={event}/>

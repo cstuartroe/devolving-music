@@ -11,6 +11,9 @@ from devolving_music.lib.song_submission_utils import submit_song
 class SubmitSpotifyPlaylistView(View):
     @safe_json_params
     def post(self, _request, playlist_link: str, event: Event):
+        if not event.allow_spotify:
+            return failure("Spotify submissions not permitted for this event.")
+
         m = re.match(
             r"^https://open.spotify.com/playlist/([a-zA-Z\d]+)",
             playlist_link,

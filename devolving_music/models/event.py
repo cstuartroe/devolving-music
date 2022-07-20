@@ -7,3 +7,6 @@ class Event(models.Model):
     created_at = models.DateTimeField()
     image = models.CharField(max_length=128)
     visible = models.BooleanField()
+    allow_spotify = models.BooleanField()
+    allow_youtube = models.BooleanField()
+    allow_soundcloud = models.BooleanField()

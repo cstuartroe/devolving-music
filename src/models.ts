@@ -25,6 +25,9 @@ export type Event = {
   created_at: string,
   image: string,
   visible: boolean,
+  allow_spotify: boolean,
+  allow_youtube: boolean,
+  allow_soundcloud: boolean,
 }
 
 export type SongSubmission = {

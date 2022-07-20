@@ -11,6 +11,9 @@ from devolving_music.lib.song_submission_utils import submit_song
 class SubmitYoutubePlaylistView(View):
     @safe_json_params
     def post(self, _request, playlist_link: str, event: Event):
+        if not event.allow_youtube:
+            return failure("YouTube submissions not permitted for this event.")
+
         m = re.search(
             r"list=([a-zA-Z\d]+)",
             playlist_link,

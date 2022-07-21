@@ -4,13 +4,19 @@ from devolving_music.lib.spotify import get_song_data
 from .param_utils import safe_json_params, success, failure
 from devolving_music.models.event import Event
 from devolving_music.models.song import Song
+from devolving_music.models.artist import Artist
 from devolving_music.models.serializers.song_submission import SongSubmissionSerializer
 from devolving_music.lib.song_submission_utils import submit_song
 
 
 class SubmitSpotifyPlaylistView(View):
+    PLATFORM = Artist.MusicPlatform.SPOTIFY
+
     @safe_json_params
     def post(self, _request, playlist_link: str, event: Event):
+        if not event.allow_spotify:
+            return failure(Event.disallowed_platform_message(self.PLATFORM))
+
         m = re.match(
             r"^https://open.spotify.com/playlist/([a-zA-Z\d]+)",
             playlist_link,

@@ -1,8 +1,17 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import { Artist_platform } from "./models";
+import { Link, Navigate } from "react-router-dom";
+import { Event, Artist_platform } from "./models";
 
 type Platform = typeof Artist_platform[number];
+
+type Allowance = "allow_spotify" | "allow_youtube" | "allow_soundcloud";
+
+const platformAllowances: {[key in Platform]: Allowance} = {
+  "Spotify": "allow_spotify",
+  "YouTube": "allow_youtube",
+  "Soundcloud": "allow_soundcloud",
+}
+
 
 type platformInfo = {
   img_link: string,
@@ -14,7 +23,11 @@ const platformInfo: {[k in Platform]: platformInfo} = {
   Soundcloud: { img_link: "/static/img/soundcloud.png" },
 }
 
-export default class ChoosePlatform extends Component<{}, {}> {
+type Props = {
+  event: Event,
+}
+
+export default class ChoosePlatform extends Component<Props, {}> {
   platformTile(platform: Platform) {
     return (
       <div className="col-12 col-md-4 platform-tile" key={platform} style={{
@@ -28,6 +41,13 @@ export default class ChoosePlatform extends Component<{}, {}> {
   }
 
   render() {
+    const allowed_platforms = Artist_platform
+      .filter(platform => this.props.event[platformAllowances[platform]]);
+
+    if (allowed_platforms.length == 1) {
+      return <Navigate to={`/submit-playlist/${allowed_platforms[0]}`}/>;
+    }
+
     return (
       <div className="row choose-platform">
         <div className="col-12" style={{paddingBottom: "4vh"}}>
@@ -36,7 +56,7 @@ export default class ChoosePlatform extends Component<{}, {}> {
           </h2>
         </div>
 
-        {Artist_platform.map(this.platformTile)}
+        {allowed_platforms.map(this.platformTile)}
       </div>
     );
   }

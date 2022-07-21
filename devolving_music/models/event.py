@@ -1,4 +1,5 @@
 from django.db import models
+from .artist import Artist
 
 
 class Event(models.Model):
@@ -10,3 +11,7 @@ class Event(models.Model):
     allow_spotify = models.BooleanField()
     allow_youtube = models.BooleanField()
     allow_soundcloud = models.BooleanField()
+
+    @staticmethod
+    def disallowed_platform_message(platform: Artist.MusicPlatform):
+        return f"{platform.value} submissions not permitted for this event."

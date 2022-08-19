@@ -1,7 +1,7 @@
 asgiref==3.5.2
 astroid==2.11.6
 autopep8==1.6.0
-backports.zoneinfo==0.2.1
+backports.zoneinfo==0.2.1;python_version<"3.9"
 certifi==2021.5.30
 charset-normalizer==2.0.4
 colorama==0.4.5

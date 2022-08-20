@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 from django.db.models.fields import BigAutoField, CharField, DateField, DateTimeField, BooleanField
 from django.db.models.fields.related import ManyToManyField, ForeignKey
 from django.db.models.fields.reverse_related import ManyToOneRel, ManyToManyRel
+from django.contrib.auth.models import User
 
 from devolving_music.models.artist import Artist
 from devolving_music.models.song import Song
@@ -12,6 +13,7 @@ from devolving_music.models.duplication_flag import DuplicationFlag
 
 
 MODELS_TO_TRANSPILE = [
+    User,
     Artist,
     Song,
     Event,
@@ -61,6 +63,8 @@ class Command(BaseCommand):
                     type_string = "string"
                 elif t is BooleanField:
                     type_string = "boolean"
+                elif model is User:
+                    pass  # Don't need all the extra django admin junk
                 elif t is ForeignKey:
                     type_string = field.related_model.__name__
                 elif t is ManyToManyField:

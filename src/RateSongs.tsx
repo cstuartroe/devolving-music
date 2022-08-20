@@ -95,9 +95,11 @@ export default class RateSongs extends Component<Props, State> {
       if (res.ok) {
         this.newSong()
       } else {
-        this.setState({
-          message: "An error occurred",
-          status: "ready",
+        res.json().then(data => {
+          this.setState({
+            status: "ready",
+            message: data.message,
+          })
         })
       }
     })
@@ -160,7 +162,7 @@ export default class RateSongs extends Component<Props, State> {
           <div className="submit-button center">
             <h2 onClick={() => this.submit()}>Submit</h2>
           </div>
-          <p>{message}</p>
+          <p style={{color: "red"}}>{message}</p>
         </div>
       </div>
     );

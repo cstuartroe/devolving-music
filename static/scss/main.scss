@@ -37,9 +37,19 @@ a, a:hover {
     align-items: center;
 }
 
-.header {
+.header, .email-bar {
     background-color: white;
     color: black;
+    display: flex;
+}
+
+.email-bar div {
+    font-size: 18px;
+    font-family: $main_font;
+    margin: auto;
+}
+
+.header {
     margin-bottom: 20px;
     display: flex;
 }

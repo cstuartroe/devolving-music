@@ -1,5 +1,7 @@
 import re
 from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from devolving_music.lib.spotify import get_song_data
 from .param_utils import safe_json_params, success, failure
 from devolving_music.models.event import Event
@@ -9,7 +11,7 @@ from devolving_music.models.serializers.song_submission import SongSubmissionSer
 from devolving_music.lib.song_submission_utils import submit_song
 
 
-class SubmitSpotifyPlaylistView(View):
+class SubmitSpotifyPlaylistView(LoginRequiredMixin, View):
     PLATFORM = Artist.MusicPlatform.SPOTIFY
 
     @safe_json_params

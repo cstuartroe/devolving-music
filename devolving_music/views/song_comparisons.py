@@ -1,12 +1,14 @@
 from django.utils import timezone
+from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework import permissions
 from rest_framework.views import APIView
+
 from devolving_music.models.song_comparison import SongComparison
 from devolving_music.models.serializers.song_comparison import SongComparisonSerializer
 from .param_utils import success, failure
 
 
-class SongComparisonsView(APIView):
+class SongComparisonsView(LoginRequiredMixin, APIView):
     permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):

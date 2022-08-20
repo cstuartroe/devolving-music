@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path, re_path, include
 from rest_framework import routers, urls as rfurls
 
-from .views import react_index
+from .views import react_index, logout
 from .views.events import EventViewSet
 from .views.current_playlist import CurrentPlaylist
 from .views.submit_spotify_playlist import SubmitSpotifyPlaylistView
@@ -22,7 +22,8 @@ router = OptionalSlashRouter()
 router.register('events', EventViewSet)
 
 urlpatterns = [
-    re_path('admin/?', admin.site.urls),
+    re_path('admin/', admin.site.urls),
+    path("google_sso/", include("django_google_sso.urls", namespace="django_google_sso")),
     path('api/submit-playlist/Spotify', SubmitSpotifyPlaylistView.as_view()),
     path('api/submit-playlist/YouTube', SubmitYoutubePlaylistView.as_view()),
     path('api/pair', GetSongPairView.as_view()),
@@ -31,5 +32,6 @@ urlpatterns = [
     path('api/current_playlist', CurrentPlaylist.as_view()),
     path('api/', include(router.urls)),
     path('api-auth/', include(rfurls)),
+    path('logout', logout),
     re_path(r'^.*$', react_index, name="react_index"),
 ]

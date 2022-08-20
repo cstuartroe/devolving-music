@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { Event } from "./models";
 import ResourceManager from "./ResourceManager";
 
+const user_email = (window as unknown as {User: string}).User;
+
 type HeaderProps = {
   event: Event,
 }
@@ -36,19 +38,27 @@ export default class Header extends Component<HeaderProps, HeaderState>{
 
   render() {
     return (
-      <div className="row header">
-        <div className={`menu-item`}>
-          <div className="header-logo">
-            <Link to="/">
-              {this.props.event.name.toLowerCase().replace(':', '\n')}
-            </Link>
+      <>
+        <div className="row email-bar">
+          <div>
+            Currently logged in as {user_email}{' | '}
+            <a href="/logout">Log out</a>
           </div>
         </div>
-        {this.state.events.length > 1 && this.renderMenuItem("/event-selector", "Switch events")}
-        {this.renderMenuItem("/submit-playlist", "Submit songs")}
-        {this.renderMenuItem("/rate", "Rate songs")}
-        {this.renderMenuItem("/current_playlist", "Current Playlist")}
-      </div>
+        <div className="row header">
+          <div className={`menu-item`}>
+            <div className="header-logo">
+              <Link to="/">
+                {this.props.event.name.toLowerCase().replace(':', '\n')}
+              </Link>
+            </div>
+          </div>
+          {this.state.events.length > 1 && this.renderMenuItem("/event-selector", "Switch events")}
+          {this.renderMenuItem("/submit-playlist", "Submit songs")}
+          {this.renderMenuItem("/rate", "Rate songs")}
+          {this.renderMenuItem("/current_playlist", "Current Playlist")}
+        </div>
+      </>
     );
   }
 }

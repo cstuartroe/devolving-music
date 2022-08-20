@@ -1,5 +1,7 @@
 import re
 from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from devolving_music.lib.youtube import get_youtube_playlist_videos
 from .param_utils import safe_json_params, success, failure
 from devolving_music.models.event import Event
@@ -9,7 +11,7 @@ from devolving_music.models.serializers.song_submission import SongSubmissionSer
 from devolving_music.lib.song_submission_utils import submit_song
 
 
-class SubmitYoutubePlaylistView(View):
+class SubmitYoutubePlaylistView(LoginRequiredMixin, View):
     PLATFORM = Artist.MusicPlatform.YOUTUBE
 
     @safe_json_params

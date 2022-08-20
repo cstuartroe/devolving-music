@@ -75,3 +75,11 @@ class ScoreSuite:
             SongComparison.objects.select_related('first_submission') .filter(
                 first_submission__event__exact=Event).order_by('id'))
         return comparison_event_submissions
+
+    @staticmethod
+    def devolve_distance(sub1: "ScoreSuite",sub2: "ScoreSuite") -> int:
+        #use l2 norm to tell distance in devolving space 
+        energy = (sub1.energy_score-sub2.energy_score)**2
+        weirdness= (sub1.post_peak_score-sub2.post_peak_score)**2
+        distance= (energy + weirdness)**0.5
+        return distance

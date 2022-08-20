@@ -31,7 +31,8 @@ class SongScores():
 
     def get_compare_submission_random(self, submission_id) -> SongSubmission:
         key_list = list(self.song_score_dict.keys())
-        key_list.remove(submission_id)
+        if(submission_id>0):
+            key_list.remove(submission_id)
         # once you have a critical number of comparisons then pull from quality
         # list
         return self.song_score_dict.get(random.choice(key_list)).song_submission
@@ -140,6 +141,31 @@ class SongScores():
 
         # return list of keys of dictionary of song objects sorted by info
         return info_submissions
+
+    @staticmethod
+    def weighted_lowest_info( info_list: List["ScoreSuite"])->Tuple:
+        # luck factor greater than 1 means everything has a chance of being chose 
+        #luck factor less than 1 means higher informed songs will never be chosen 
+        luck_factor=1
+        ceiling = round((info_list[-1].info_score)*luck_factor)
+        random_num=0
+        for song_score in info_list:
+            increase_random = ceiling-song_score.info_score
+            if(increase_random>0):
+                random_num+=increase_random
+            else:
+                break
+        select_num=random.randrange(random_num+1)
+        ceiling_check=0
+
+        for song_score in enumerate(info_list):
+            increase_ceiling = ceiling-info_list[song_score[0]].info_score
+            if((ceiling_check+increase_ceiling )>=select_num):
+                return song_score
+            else:
+                ceiling_check+=increase_ceiling
+
+
 
     @staticmethod
     # sorts in ascending order

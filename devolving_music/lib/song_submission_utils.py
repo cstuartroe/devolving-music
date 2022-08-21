@@ -9,7 +9,7 @@ from devolving_music.models.song_submission import SongSubmission
 from devolving_music.models.duplication_flag import DuplicationFlag
 
 
-SONG_SUBMISSION_QUOTA = 75
+SONG_SUBMISSION_QUOTA = 100
 
 
 def _check_duplicates(sub: SongSubmission):
@@ -44,9 +44,9 @@ def submit_songs(songs: Iterable[Song], event: Event, submitter: User) -> list[S
         except SongSubmission.DoesNotExist:
             to_submit.append(song)
 
-    already_submitted_by_user = list(SongSubmission.objects.filter(submitter=submitter, event=event))
+    already_submitted_by_user = SongSubmission.objects.filter(submitter=submitter, event=event).count()
 
-    if len(already_submitted_by_user) + len(to_submit) > SONG_SUBMISSION_QUOTA:
+    if already_submitted_by_user + len(to_submit) > SONG_SUBMISSION_QUOTA:
         raise QuotaExceededError(f"Number of songs would exceed quota ({len(already_submitted_by_user)} songs "
                                  f"already submitted, currently attempting to submit {len(to_submit)} songs, "
                                  f"quota is {SONG_SUBMISSION_QUOTA}).")

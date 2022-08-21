@@ -6,5 +6,5 @@ from devolving_music.models.serializers.event import EventSerializer
 
 
 class EventViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
-    queryset = Event.objects.filter(visible__exact=True)
+    queryset = Event.objects.filter(visible__exact=True).order_by('id')
     serializer_class = EventSerializer

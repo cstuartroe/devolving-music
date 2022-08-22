@@ -2,6 +2,18 @@
 DO NOT manually edit it.
 Run `python manage.py transpile_models` to update it. */
 
+export type User = {
+  password: string,
+  last_login: string,
+  is_superuser: boolean,
+  username: string,
+  first_name: string,
+  last_name: string,
+  is_staff: boolean,
+  is_active: boolean,
+  date_joined: string,
+}
+
 export const Artist_platform = ['Spotify', 'YouTube', 'Soundcloud'] as const;
 
 export type Artist = {
@@ -34,6 +46,7 @@ export type SongSubmission = {
   id: number,
   event: Event,
   song: Song,
+  submitter: User,
   created_at: string,
 }
 
@@ -41,6 +54,7 @@ export type SongComparison = {
   id: number,
   first_submission: SongSubmission,
   second_submission: SongSubmission,
+  voter: User,
   created_at: string,
   first_better: boolean,
   first_peakier: boolean,

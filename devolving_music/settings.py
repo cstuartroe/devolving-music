@@ -33,7 +33,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "django.contrib.sites",
     'rest_framework',
+    "django_google_sso",
     'devolving_music.apps.DevolvingMusicConfig',
 ]
 
@@ -128,3 +130,10 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 100,
 }
+
+GOOGLE_SSO_CLIENT_ID = os.getenv("GOOGLE_SSO_CLIENT_ID")
+GOOGLE_SSO_PROJECT_ID = os.getenv("GOOGLE_SSO_PROJECT_ID")
+GOOGLE_SSO_CLIENT_SECRET = os.getenv("GOOGLE_SSO_CLIENT_SECRET")
+
+# SITE_ID = 1
+GOOGLE_SSO_ALLOWABLE_DOMAINS = ['gmail.com']

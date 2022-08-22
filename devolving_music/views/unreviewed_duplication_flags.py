@@ -1,12 +1,14 @@
 from django.utils import timezone
+from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework import permissions
 from rest_framework.views import APIView
+
 from devolving_music.models.duplication_flag import DuplicationFlag
 from devolving_music.models.serializers.duplication_flag import DuplicationFlagSerializer
 from .param_utils import success, failure
 
 
-class UnreviewedDuplicationFlagView(APIView):
+class UnreviewedDuplicationFlagView(LoginRequiredMixin, APIView):
     permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):

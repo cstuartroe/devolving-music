@@ -1,19 +1,21 @@
 import re
 from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from devolving_music.lib.spotify import get_song_data
 from .param_utils import safe_json_params, success, failure
 from devolving_music.models.event import Event
 from devolving_music.models.song import Song
 from devolving_music.models.artist import Artist
 from devolving_music.models.serializers.song_submission import SongSubmissionSerializer
-from devolving_music.lib.song_submission_utils import submit_song
+from devolving_music.lib.song_submission_utils import submit_songs, QuotaExceededError
 
 
-class SubmitSpotifyPlaylistView(View):
+class SubmitSpotifyPlaylistView(LoginRequiredMixin, View):
     PLATFORM = Artist.MusicPlatform.SPOTIFY
 
     @safe_json_params
-    def post(self, _request, playlist_link: str, event: Event):
+    def post(self, request, playlist_link: str, event: Event):
         if not event.allow_spotify:
             return failure(Event.disallowed_platform_message(self.PLATFORM))
 
@@ -27,11 +29,14 @@ class SubmitSpotifyPlaylistView(View):
 
         playlist_id = m.group(1)
 
-        submissions = []
-        for track in get_song_data(playlist_id):
-            if not track["is_local"]:
-                song = Song.from_spotify_json(track)
-                sub = submit_song(song=song, event=event)
-                submissions.append(sub)
+        tracks = [
+            Song.from_spotify_json(track)
+            for track in get_song_data(playlist_id)
+            if not track["is_local"]
+        ]
 
-        return success([SongSubmissionSerializer(sub).data for sub in submissions])
+        try:
+            submissions = submit_songs(tracks, event=event, submitter=request.user)
+            return success([SongSubmissionSerializer(sub).data for sub in submissions])
+        except QuotaExceededError as e:
+            return failure(str(e))

@@ -1,4 +1,5 @@
 from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from devolving_music.lib.score_suite import ScoreSuite
 from devolving_music.lib.song_scores import SongScores
@@ -8,7 +9,7 @@ from devolving_music.models.event import Event
 from devolving_music.models.serializers.song_submission import SongSubmissionSerializer
 
 
-class GetSongPairView(View):
+class GetSongPairView(LoginRequiredMixin, View):
     @safe_url_params
     def get(self, _request, event: Event):
 

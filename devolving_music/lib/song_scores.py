@@ -155,7 +155,7 @@ class SongScores():
         # luck factor less than 1 means that some higher informed songs will
         # never be chosen
         info_list = SongScores.get_info_sort(score_suite_list)
-        ceiling = round((info_list[-1].info_score) * luck_factor)
+        ceiling = round(((info_list[-1].info_score) + 1) * luck_factor)
 
         random_num = 0
         for song_score in info_list:

@@ -21,10 +21,9 @@ class GetSongPairView(LoginRequiredMixin, View):
 
         scores = SongScores(event)
         scores_list = scores.get_scores()
-        info_list = SongScores.get_info_sort(list(scores_list.values()))
 
         # grab submission with a tendency to be low information
-        score_low_info = SongScores.weighted_lowest_info(info_list)
+        score_low_info = SongScores.weighted_lowest_info(list(scores_list.values()))
         sub1 = score_low_info.song_submission
         # grab random submission
         sub2 = scores.get_compare_submission_random(sub1.id)

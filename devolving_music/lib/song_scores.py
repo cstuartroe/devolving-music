@@ -1,6 +1,5 @@
 from cmath import inf
 from typing import List
-from typing import Tuple
 import random
 
 
@@ -31,8 +30,9 @@ class SongScores():
         return self.song_score_dict
 
     def get_compare_submission_random(self, submission_id) -> SongSubmission:
+        #removes submission_id from the random choices unless it is negative
         key_list = list(self.song_score_dict.keys())
-        if(submission_id > 0):
+        if(submission_id >= 0):
             key_list.remove(submission_id)
         # once you have a critical number of comparisons then pull from quality
         # list
@@ -149,11 +149,12 @@ class SongScores():
 
     @staticmethod
     def weighted_lowest_info(
-            info_list: List["ScoreSuite"],
+            score_suite_list: List["ScoreSuite"],
             luck_factor=1) -> "ScoreSuite":
         # luck factor greater than 1 means everything has a chance of being chosen
         # luck factor less than 1 means that some higher informed songs will
         # never be chosen
+        info_list=SongScores.get_info_sort(score_suite_list)
         ceiling = round((info_list[-1].info_score) * luck_factor)
 
         random_num = 0

@@ -38,7 +38,8 @@ class ScoreSuite:
 
     def to_json(self):
         return {
-            "song_submission": SongSubmissionSerializer(self.song_submission).data,
+            "song_submission": SongSubmissionSerializer(
+                self.song_submission).data,
             "energy_score": self.energy_score,
             "quality_score": self.quality_score,
             "post_peak_score": self.post_peak_score,
@@ -77,9 +78,9 @@ class ScoreSuite:
         return comparison_event_submissions
 
     @staticmethod
-    def devolve_distance(sub1: "ScoreSuite",sub2: "ScoreSuite") -> int:
-        #use l2 norm to tell distance in devolving space 
-        energy = (sub1.energy_score-sub2.energy_score)**2
-        weirdness= (sub1.post_peak_score-sub2.post_peak_score)**2
-        distance= (energy + weirdness)**0.5
+    def devolve_distance(sub1: "ScoreSuite", sub2: "ScoreSuite") -> int:
+        # use l2 norm to tell distance in devolving space
+        energy = (sub1.energy_score - sub2.energy_score)**2
+        weirdness = (sub1.post_peak_score - sub2.post_peak_score)**2
+        distance = (energy + weirdness)**0.5
         return distance

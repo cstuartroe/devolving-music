@@ -1,5 +1,6 @@
 from cmath import inf
 from typing import List
+from typing import Tuple
 import random
 
 
@@ -31,11 +32,12 @@ class SongScores():
 
     def get_compare_submission_random(self, submission_id) -> SongSubmission:
         key_list = list(self.song_score_dict.keys())
-        if(submission_id>0):
+        if(submission_id > 0):
             key_list.remove(submission_id)
         # once you have a critical number of comparisons then pull from quality
         # list
-        return self.song_score_dict.get(random.choice(key_list)).song_submission
+        return self.song_score_dict.get(
+            random.choice(key_list)).song_submission
 
     def get_compare_submission_linear(self, submission_id) -> SongSubmission:
         if(len(self.comparison_submissions) == 0):
@@ -82,7 +84,10 @@ class SongScores():
         # remove all song_submissions with no information
         info_list = SongScores.get_info_sort(scored_submissions)
 
-        informed_list = list(filter(lambda sub: sub.info_score >= INFO_THRESHOLD, info_list))
+        informed_list = list(
+            filter(
+                lambda sub: sub.info_score >= INFO_THRESHOLD,
+                info_list))
 
         # sort by postpeakyness
         peaky_list = SongScores.get_peak_sort(informed_list)
@@ -119,9 +124,9 @@ class SongScores():
     def get_info_sort(
             score_suite_list: List["ScoreSuite"]) -> List["ScoreSuite"]:
         """
-        Returns a list of song suites ordered by low information songs with the lowest information score 
+        Returns a list of song suites ordered by low information songs with the lowest information score
         are randomly shuffled before being added to the list
-        
+
         """
         score_suite_list.sort(key=lambda sub: sub.info_score)
         rightend = 0
@@ -143,29 +148,33 @@ class SongScores():
         return info_submissions
 
     @staticmethod
-    def weighted_lowest_info( info_list: List["ScoreSuite"])->Tuple:
-        # luck factor greater than 1 means everything has a chance of being chose 
-        #luck factor less than 1 means higher informed songs will never be chosen 
-        luck_factor=1
-        ceiling = round((info_list[-1].info_score)*luck_factor)
-        random_num=0
+    def weighted_lowest_info(
+            info_list: List["ScoreSuite"],
+            luck_factor=1) -> "ScoreSuite":
+        # luck factor greater than 1 means everything has a chance of being chosen
+        # luck factor less than 1 means that some higher informed songs will
+        # never be chosen
+        ceiling = round((info_list[-1].info_score) * luck_factor)
+
+        random_num = 0
         for song_score in info_list:
-            increase_random = ceiling-song_score.info_score
-            if(increase_random>0):
-                random_num+=increase_random
+            increase_random = ceiling - song_score.info_score
+            if(increase_random > 0):
+                random_num += increase_random
             else:
                 break
-        select_num=random.randrange(random_num+1)
-        ceiling_check=0
+        select_num = random.randrange(random_num + 1)
+        ceiling_check = 0
 
         for song_score in enumerate(info_list):
-            increase_ceiling = ceiling-info_list[song_score[0]].info_score
-            if((ceiling_check+increase_ceiling )>=select_num):
-                return song_score
+            increase_ceiling = ceiling - info_list[song_score[0]].info_score
+            if(increase_ceiling < 0):
+                increase_ceiling = 0
+
+            if((ceiling_check + increase_ceiling) >= select_num):
+                return song_score[1]
             else:
-                ceiling_check+=increase_ceiling
-
-
+                ceiling_check += increase_ceiling
 
     @staticmethod
     # sorts in ascending order

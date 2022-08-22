@@ -22,8 +22,9 @@ class GetSongPairView(View):
         scores_list = scores.get_scores()
         info_list = SongScores.get_info_sort(list(scores_list.values()))
 
-        # grab submission with least ammount of information
-        sub1 = info_list[0].song_submission
+        # grab submission with a tendency to be low information
+        score_low_info = SongScores.weighted_lowest_info(info_list)
+        sub1 = score_low_info.song_submission
         # grab random submission
         sub2 = scores.get_compare_submission_random(sub1.id)
 

@@ -30,9 +30,9 @@ class SongScores():
         return self.song_score_dict
 
     def get_compare_submission_random(self, submission_id) -> SongSubmission:
-        #removes submission_id from the random choices unless it is negative
+        # removes submission_id from the random choices unless it is negative
         key_list = list(self.song_score_dict.keys())
-        if(submission_id >= 0):
+        if (submission_id >= 0):
             key_list.remove(submission_id)
         # once you have a critical number of comparisons then pull from quality
         # list
@@ -40,10 +40,10 @@ class SongScores():
             random.choice(key_list)).song_submission
 
     def get_compare_submission_linear(self, submission_id) -> SongSubmission:
-        if(len(self.comparison_submissions) == 0):
+        if (len(self.comparison_submissions) == 0):
             return self.get_compare_submission_random(submission_id)
         first_recent = self.comparison_submissions[-1].first_submission
-        if(submission_id == first_recent.id):
+        if (submission_id == first_recent.id):
             return self.get_compare_submission_random(submission_id)
         return first_recent
 
@@ -154,13 +154,13 @@ class SongScores():
         # luck factor greater than 1 means everything has a chance of being chosen
         # luck factor less than 1 means that some higher informed songs will
         # never be chosen
-        info_list=SongScores.get_info_sort(score_suite_list)
+        info_list = SongScores.get_info_sort(score_suite_list)
         ceiling = round((info_list[-1].info_score) * luck_factor)
 
         random_num = 0
         for song_score in info_list:
             increase_random = ceiling - song_score.info_score
-            if(increase_random > 0):
+            if (increase_random > 0):
                 random_num += increase_random
             else:
                 break
@@ -169,10 +169,10 @@ class SongScores():
 
         for song_score in enumerate(info_list):
             increase_ceiling = ceiling - info_list[song_score[0]].info_score
-            if(increase_ceiling < 0):
+            if (increase_ceiling < 0):
                 increase_ceiling = 0
 
-            if((ceiling_check + increase_ceiling) >= select_num):
+            if ((ceiling_check + increase_ceiling) >= select_num):
                 return song_score[1]
             else:
                 ceiling_check += increase_ceiling

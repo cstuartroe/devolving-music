@@ -21,6 +21,8 @@ class SongScores():
 
     def get_scores(self) -> "dict[int, ScoreSuite]":
         # calculates scores for all submissions using current comparisons
+        # returns a dictionary where keys are the song submission id
+        # corresponding to the score suite object
         for compare in self.comparison_submissions:
             song_suite_1 = self.song_score_dict[compare.first_submission.id]
             song_suite_2 = self.song_score_dict[compare.second_submission.id]
@@ -28,6 +30,11 @@ class SongScores():
             SongScores.update_song_rating(compare, song_suite_1, song_suite_2)
 
         return self.song_score_dict
+
+    def get_scores_list(self) -> "list[ScoreSuite]":
+        # calculates scores for all submissions using current comparisons
+        # returns list of all score suite objects
+        return list(self.get_scores().values())
 
     def get_compare_submission_random(self, submission_id) -> SongSubmission:
         # removes submission_id from the random choices unless it is negative
@@ -79,7 +86,7 @@ class SongScores():
 
     def get_final_list(self) -> List["ScoreSuite"]:
 
-        scored_submissions = list(self.get_scores().values())
+        scored_submissions = self.get_scores_list()
 
         # remove all song_submissions with no information
         info_list = SongScores.get_info_sort(scored_submissions)
@@ -116,33 +123,38 @@ class SongScores():
 
         return final_quality_list
 
-    ###
-    # static methods can be moved into helper function
-    ###
     @staticmethod
     # sorts in ascending order
     def get_info_sort(
-            score_suite_list: List["ScoreSuite"]) -> List["ScoreSuite"]:
+            score_suite_list: List["ScoreSuite"],
+            get_informed=False,
+            informed_measure=1) -> List["ScoreSuite"]:
         """
         Returns a list of song suites ordered by low information songs with the lowest information score
-        are randomly shuffled before being added to the list
+        randomly shuffled before being added to the list
 
         """
         score_suite_list.sort(key=lambda sub: sub.info_score)
         rightend = 0
-        init = score_suite_list[0].info_score
+        if (get_informed):
+            init = informed_measure
+        else:
+            init = score_suite_list[0].info_score
 
         for sub in score_suite_list:
             sub_info = sub.info_score
-            if sub_info == init:
+            if sub_info <= init:
                 rightend += 1
             else:
                 break
-
-        lowest_info = score_suite_list[0:rightend]
-        random.shuffle(lowest_info)
-        other_info = score_suite_list[rightend:]
-        info_submissions = lowest_info + other_info
+        if (get_informed):
+            other_info = score_suite_list[rightend:]
+            info_submissions = other_info
+        else:
+            lowest_info = score_suite_list[0:rightend]
+            random.shuffle(lowest_info)
+            other_info = score_suite_list[rightend:]
+            info_submissions = lowest_info + other_info
 
         # return list of keys of dictionary of song objects sorted by info
         return info_submissions

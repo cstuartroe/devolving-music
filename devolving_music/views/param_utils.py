@@ -35,7 +35,8 @@ def _safe_params(func, params_getter):
         data_params = params_getter(request)
 
         if len(set(url_params) & set(data_params)) > 0:
-            raise ValueError(f"Duplicate param(s): {set(url_params) & set(data_params)}")
+            raise ValueError(
+                f"Duplicate param(s): {set(url_params) & set(data_params)}")
 
         d = {
             **data_params,
@@ -60,4 +61,5 @@ def safe_url_params(func):
 
 
 def safe_json_params(func):
-    return _safe_params(func, lambda request: json.loads(request.body.decode()))
+    return _safe_params(
+        func, lambda request: json.loads(request.body.decode()))

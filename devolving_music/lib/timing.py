@@ -21,7 +21,8 @@ class TaskTimer:
             current_task = '/'.join(self.task_stack)
 
             self.task_timings[current_task] = (
-                self.task_timings.get(current_task, 0) + time.time() - self.start_time
+                self.task_timings.get(
+                    current_task, 0) + time.time() - self.start_time
             )
             self.start_time = None
 
@@ -48,7 +49,11 @@ class TaskTimer:
             self.end_task()
 
     def __str__(self):
-        tasks = sorted(list(self.task_timings.items()), key=lambda p: p[1], reverse=True)
+        tasks = sorted(
+            list(
+                self.task_timings.items()),
+            key=lambda p: p[1],
+            reverse=True)
 
         out = "TaskTimer:\n"
         for task_name, time_taken in tasks:

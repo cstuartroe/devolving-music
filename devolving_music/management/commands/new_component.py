@@ -36,5 +36,3 @@ class Command(BaseCommand):
         for name in component_names:
             with open(f"src/{name}.tsx", "w") as fh:
                 fh.write(CONTENTS % name)
-
-

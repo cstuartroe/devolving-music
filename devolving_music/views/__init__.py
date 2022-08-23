@@ -8,7 +8,8 @@ def react_index(request):
         r = HttpResponseRedirect("/admin/login/?next=/")
         return r
 
-    return render(request, 'react_index.html', {"user_email": request.user.email})
+    return render(request, 'react_index.html', {
+                  "user_email": request.user.email})
 
 
 def logout(request):

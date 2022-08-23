@@ -81,4 +81,3 @@ class Command(BaseCommand):
 
         with open(OUTFILE, "w") as fh:
             fh.write(contents)
-

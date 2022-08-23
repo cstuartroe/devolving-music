@@ -13,7 +13,8 @@ SONG_SUBMISSION_QUOTA = 100
 
 
 def _check_duplicates(sub: SongSubmission):
-    for existing_sub in SongSubmission.objects.filter(event__exact=sub.event).exclude(id=sub.id):
+    for existing_sub in SongSubmission.objects.filter(
+            event__exact=sub.event).exclude(id=sub.id):
         if Song.fuzzy_match(existing_sub.song, sub.song):
             flag = DuplicationFlag(
                 existing_submission=existing_sub,
@@ -29,7 +30,8 @@ class QuotaExceededError(RuntimeError):
     pass
 
 
-def submit_songs(songs: Iterable[Song], event: Event, submitter: User) -> list[SongSubmission]:
+def submit_songs(songs: Iterable[Song], event: Event,
+                 submitter: User) -> list[SongSubmission]:
     to_submit = []
     submissions = []
 
@@ -44,7 +46,8 @@ def submit_songs(songs: Iterable[Song], event: Event, submitter: User) -> list[S
         except SongSubmission.DoesNotExist:
             to_submit.append(song)
 
-    already_submitted_by_user = SongSubmission.objects.filter(submitter=submitter, event=event).count()
+    already_submitted_by_user = SongSubmission.objects.filter(
+        submitter=submitter, event=event).count()
 
     if already_submitted_by_user + len(to_submit) > SONG_SUBMISSION_QUOTA:
         raise QuotaExceededError(f"Number of songs would exceed quota ({len(already_submitted_by_user)} songs "

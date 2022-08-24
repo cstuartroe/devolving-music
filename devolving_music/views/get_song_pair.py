@@ -27,7 +27,7 @@ class GetSongPairView(LoginRequiredMixin, View):
                 "Not enough songs have been submitted for this event.")
 
         scores = SongScores(event)
-        scores_list = scores.get_scores_list()
+        scores_list = scores.get_scores_list
 
         # grab submission with a tendency to be low information
         score_low_info = SongScores.weighted_lowest_info(scores_list,LUCK_FACTOR)

@@ -18,6 +18,7 @@ class SongScores():
     def __init__(self, event: Event):
         self.song_score_dict = ScoreSuite.get_song_scores_dict(event)
         self.comparison_submissions = ScoreSuite.get_event_comparisons(event)
+        self.update_scores()
 
     def update_scores(self) -> "None":
         # calculates scores for all submissions using current comparisons
@@ -29,16 +30,16 @@ class SongScores():
 
             SongScores.update_song_rating(compare, song_suite_1, song_suite_2)
 
+    @property
     def get_scores_list(self) -> "list[ScoreSuite]":
         # calculates scores for all submissions using current comparisons
         # returns list of all score suite objects
-        self.update_scores()
         return list(self.song_score_dict.values())
 
+    @property
     def get_scores_dict(self) -> "dict[int, ScoreSuite]":
         # calculates scores for all submissions using current comparisons
         # returns list of all score suite objects
-        self.update_scores()
         return self.song_score_dict
 
     def get_compare_submission_random(self, submission_id) -> SongSubmission:
@@ -47,16 +48,14 @@ class SongScores():
         return self.song_score_dict.get(
             random.choice(key_list)).song_submission
 
-    def get_compare_submission_closest(self, score_suite_obj: "ScoreSuite", information_threshold : int, update_scores = False):
+    def get_compare_submission_closest(self, score_suite_obj: "ScoreSuite", information_threshold : int) -> List["ScoreSuite"]:
         # information threshold is the threshhold at which we start to consider score_suites as being able to be close to score_suite_obj
         # score_suites below this information threshhold are considered to be infinitely far away from score_suite_obj
-        if(update_scores):
-            self.update_scores()
         score_dict = copy.deepcopy(self.song_score_dict)
         target_id = score_suite_obj.song_submission.id
         score_dict.pop(target_id)
-        score_list=list(score_dict.values())
-        closest_songs=SongScores.get_distance_sort(score_suite_obj, score_list, information_threshold)
+        score_list = list(score_dict.values())
+        closest_songs = SongScores.get_distance_sort(score_suite_obj, score_list, information_threshold)
         return closest_songs
 
 
@@ -100,7 +99,7 @@ class SongScores():
 
     def get_final_list(self) -> List["ScoreSuite"]:
 
-        scored_submissions = self.get_scores_list()
+        scored_submissions = self.get_scores_list
 
         # remove all song_submissions with no information
         info_list = SongScores.get_info_sort(scored_submissions)
@@ -150,14 +149,13 @@ class SongScores():
         """
         score_suite_list = sorted(score_suite_list, key=lambda sub: sub.info_score)
         rightend = 0
-        if (get_informed):
-            init = informed_threshold
-        else:
-            init = score_suite_list[0].info_score
 
+        if (not get_informed):
+            informed_threshold = score_suite_list[0].info_score
+        
         for sub in score_suite_list:
             sub_info = sub.info_score
-            if sub_info <= init:
+            if sub_info <= informed_threshold:
                 rightend += 1
             else:
                 break
@@ -193,13 +191,13 @@ class SongScores():
         select_num = random.randrange(random_num + 1)
         ceiling_check = 0
 
-        for song_score in enumerate(info_list):
-            increase_ceiling = ceiling - info_list[song_score[0]].info_score
+        for song_score in info_list:
+            increase_ceiling = ceiling - song_score.info_score
             if (increase_ceiling < 0):
                 increase_ceiling = 0
 
             if ((ceiling_check + increase_ceiling) >= select_num):
-                return song_score[1]
+                return song_score
             else:
                 ceiling_check += increase_ceiling
 

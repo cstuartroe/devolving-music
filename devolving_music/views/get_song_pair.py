@@ -7,7 +7,7 @@ from .param_utils import safe_url_params, success, failure
 from devolving_music.lib.song_utils import get_song_color
 from devolving_music.models.event import Event
 from devolving_music.models.serializers.song_submission import SongSubmissionSerializer
-INFORMED = 1
+INFORMED = 0
 
 class GetSongPairView(LoginRequiredMixin, View):
     @safe_url_params

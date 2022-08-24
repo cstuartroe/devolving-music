@@ -48,7 +48,9 @@ class ScoreSuite:
     
     def devolve_distance(self, sub2: "ScoreSuite") -> int:
         # use l2 norm to tell distance in devolving space
-        if(sub2.energy_score is not None and sub2.post_peak_score is not None ):
+        sub2_valid = sub2.energy_score is not None and sub2.post_peak_score is not None
+        self_valid = self.energy_score is not None and self.post_peak_score is not None
+        if(sub2_valid and self_valid ):
             energy = (self.energy_score - sub2.energy_score)**2
             weirdness = (self.post_peak_score - sub2.post_peak_score)**2
             distance = (energy + weirdness)**0.5

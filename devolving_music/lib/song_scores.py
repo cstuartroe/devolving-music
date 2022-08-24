@@ -146,13 +146,12 @@ class SongScores():
                 rightend += 1
             else:
                 break
+        other_info = score_suite_list[rightend:]
         if (get_informed):
-            other_info = score_suite_list[rightend:]
             info_submissions = other_info
         else:
             lowest_info = score_suite_list[0:rightend]
             random.shuffle(lowest_info)
-            other_info = score_suite_list[rightend:]
             info_submissions = lowest_info + other_info
 
         # return list of keys of dictionary of song objects sorted by info

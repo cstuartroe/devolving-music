@@ -15,25 +15,16 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Artist',
             fields=[
-                ('id', models.AutoField(auto_created=True,
-                 primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=64)),
-                ('platform',
-                 models.CharField(choices=[('Spotify',
-                                            'Spotify'),
-                                           ('YouTube',
-                                            'YouTube'),
-                                           ('Soundcloud',
-                                            'Soundcloud')],
-                                  max_length=16)),
+                ('platform', models.CharField(choices=[('Spotify', 'Spotify'), ('YouTube', 'YouTube'), ('Soundcloud', 'Soundcloud')], max_length=16)),
                 ('platform_id', models.CharField(max_length=32, unique=True)),
             ],
         ),
         migrations.CreateModel(
             name='Event',
             fields=[
-                ('id', models.AutoField(auto_created=True,
-                 primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=64)),
                 ('date', models.DateField()),
                 ('created_at', models.DateTimeField()),
@@ -42,48 +33,35 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Song',
             fields=[
-                ('id', models.AutoField(auto_created=True,
-                 primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.CharField(max_length=64)),
                 ('platform_id', models.CharField(max_length=32, unique=True)),
-                ('artist', models.ForeignKey(
-                    on_delete=django.db.models.deletion.CASCADE, to='devolving_music.artist')),
+                ('artist', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='devolving_music.artist')),
             ],
         ),
         migrations.CreateModel(
             name='SongSubmission',
             fields=[
-                ('id', models.AutoField(auto_created=True,
-                 primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('created_at', models.DateTimeField()),
-                ('event', models.ForeignKey(
-                    on_delete=django.db.models.deletion.CASCADE, to='devolving_music.event')),
-                ('song', models.ForeignKey(
-                    on_delete=django.db.models.deletion.CASCADE, to='devolving_music.song')),
+                ('event', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='devolving_music.event')),
+                ('song', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='devolving_music.song')),
             ],
         ),
         migrations.CreateModel(
             name='SongComparison',
             fields=[
-                ('id', models.AutoField(auto_created=True,
-                 primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('created_at', models.DateTimeField()),
                 ('first_better', models.BooleanField()),
                 ('first_peakier', models.BooleanField()),
                 ('first_post_peakier', models.BooleanField()),
-                ('first_submission',
-                 models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
-                                   related_name='+',
-                                   to='devolving_music.songsubmission')),
-                ('second_submission',
-                 models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
-                                   related_name='+',
-                                   to='devolving_music.songsubmission')),
+                ('first_submission', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='+', to='devolving_music.songsubmission')),
+                ('second_submission', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='+', to='devolving_music.songsubmission')),
             ],
         ),
         migrations.AddConstraint(
             model_name='songsubmission',
-            constraint=models.UniqueConstraint(
-                fields=('event', 'song'), name='unique_event_and_song'),
+            constraint=models.UniqueConstraint(fields=('event', 'song'), name='unique_event_and_song'),
         ),
     ]

@@ -18,8 +18,7 @@ class UnreviewedDuplicationFlagView(LoginRequiredMixin, APIView):
         serializer = DuplicationFlagSerializer(self.get_queryset(), many=True)
         return success(serializer.data)
 
-    # This isn't really good RESTful semantics - this POST endpoint is used
-    # *only* for updating!
+    # This isn't really good RESTful semantics - this POST endpoint is used *only* for updating!
     def post(self, request):
         serializer = DuplicationFlagSerializer(
             DuplicationFlag.objects.get(id=request.data["id"]),

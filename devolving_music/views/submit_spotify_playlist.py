@@ -36,9 +36,7 @@ class SubmitSpotifyPlaylistView(LoginRequiredMixin, View):
         ]
 
         try:
-            submissions = submit_songs(
-                tracks, event=event, submitter=request.user)
-            return success([SongSubmissionSerializer(
-                sub).data for sub in submissions])
+            submissions = submit_songs(tracks, event=event, submitter=request.user)
+            return success([SongSubmissionSerializer(sub).data for sub in submissions])
         except QuotaExceededError as e:
             return failure(str(e))

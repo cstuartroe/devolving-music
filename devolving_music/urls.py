@@ -23,17 +23,12 @@ router.register('events', EventViewSet)
 
 urlpatterns = [
     re_path('admin/', admin.site.urls),
-    path(
-        "google_sso/",
-        include(
-            "django_google_sso.urls",
-            namespace="django_google_sso")),
+    path("google_sso/", include("django_google_sso.urls", namespace="django_google_sso")),
     path('api/submit-playlist/Spotify', SubmitSpotifyPlaylistView.as_view()),
     path('api/submit-playlist/YouTube', SubmitYoutubePlaylistView.as_view()),
     path('api/pair', GetSongPairView.as_view()),
     path('api/song_comparisons', SongComparisonsView.as_view()),
-    path('api/unreviewed_duplication_flags',
-         UnreviewedDuplicationFlagView.as_view()),
+    path('api/unreviewed_duplication_flags', UnreviewedDuplicationFlagView.as_view()),
     path('api/current_playlist', CurrentPlaylist.as_view()),
     path('api/', include(router.urls)),
     path('api-auth/', include(rfurls)),

@@ -25,8 +25,7 @@ class SubmitYoutubePlaylistView(LoginRequiredMixin, View):
         )
 
         if m is None:
-            return failure(
-                "Malformed Youtube playlist link. Was it only a link to a single video?")
+            return failure("Malformed Youtube playlist link. Was it only a link to a single video?")
 
         playlist_id = m.group(1)
 
@@ -36,9 +35,7 @@ class SubmitYoutubePlaylistView(LoginRequiredMixin, View):
         ]
 
         try:
-            submissions = submit_songs(
-                songs, event=event, submitter=request.user)
-            return success([SongSubmissionSerializer(
-                sub).data for sub in submissions])
+            submissions = submit_songs(songs, event=event, submitter=request.user)
+            return success([SongSubmissionSerializer(sub).data for sub in submissions])
         except QuotaExceededError as e:
             return failure(str(e))

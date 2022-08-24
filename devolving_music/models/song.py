@@ -26,10 +26,7 @@ class Song(models.Model):
     @staticmethod
     def from_spotify_json(data):
         artists = [
-            Artist.from_fields(
-                artist_data["id"],
-                artist_data["name"],
-                Artist.MusicPlatform.SPOTIFY)
+            Artist.from_fields(artist_data["id"], artist_data["name"], Artist.MusicPlatform.SPOTIFY)
             for artist_data in data["artists"]
         ]
 

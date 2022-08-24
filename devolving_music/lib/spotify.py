@@ -29,8 +29,6 @@ def get_song_data(playlist_id: str):
 
 
 def get_spotify_embed_color(platform_id: str):
-    res = requests.get(
-        f"https://open.spotify.com/embed/track/{platform_id}?utm_source=generator")
+    res = requests.get(f"https://open.spotify.com/embed/track/{platform_id}?utm_source=generator")
 
-    return re.search(
-        r"dominantColor%22%3A%22%23([\da-f]{6})", res.text).group(1)
+    return re.search(r"dominantColor%22%3A%22%23([\da-f]{6})", res.text).group(1)

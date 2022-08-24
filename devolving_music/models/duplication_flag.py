@@ -39,5 +39,4 @@ class DuplicationFlag(models.Model):
         ]
 
     def blocks_voting(self) -> bool:
-        return self.status in (
-            DuplicationFlag.Status.UNREVIEWED, DuplicationFlag.Status.DUPLICATE)
+        return self.status in (DuplicationFlag.Status.UNREVIEWED, DuplicationFlag.Status.DUPLICATE)

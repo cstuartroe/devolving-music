@@ -5,8 +5,7 @@ from typing import Optional
 API_KEY = os.getenv("YOUTUBE_API_KEY")
 
 
-def get_youtube_playlist_items(
-        playlist_id: str, page_token: Optional[str] = None):
+def get_youtube_playlist_items(playlist_id: str, page_token: Optional[str] = None):
     params = {
         "part": "contentDetails",
         "playlistId": playlist_id,

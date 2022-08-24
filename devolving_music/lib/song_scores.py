@@ -36,10 +36,9 @@ class SongScores():
         # returns list of all score suite objects
         return list(self.get_scores().values())
 
-    def get_compare_submission_random(self, submission_id) -> SongSubmission:
-        # removes submission_id from the random choices unless it is negative
+    def get_compare_submission_random(self, submission_id , remove_submission = True) -> SongSubmission:
         key_list = list(self.song_score_dict.keys())
-        if (submission_id >= 0):
+        if (remove_submission):
             key_list.remove(submission_id)
         # once you have a critical number of comparisons then pull from quality
         # list

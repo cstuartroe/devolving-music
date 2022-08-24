@@ -9,8 +9,8 @@ ALLOWED_HOSTS = [
     'music.devolving.party',
 ]
 
-# DEBUG = bool(os.getenv('DEBUG')) 
-DEBUG = True
+DEBUG = bool(os.getenv('DEBUG')) 
+
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),

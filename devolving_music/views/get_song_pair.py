@@ -7,7 +7,7 @@ from .param_utils import safe_url_params, success, failure
 from devolving_music.lib.song_utils import get_song_color
 from devolving_music.models.event import Event
 from devolving_music.models.serializers.song_submission import SongSubmissionSerializer
-
+INFORMED = 1
 
 class GetSongPairView(LoginRequiredMixin, View):
     @safe_url_params
@@ -25,8 +25,13 @@ class GetSongPairView(LoginRequiredMixin, View):
         # grab submission with a tendency to be low information
         score_low_info = SongScores.weighted_lowest_info(scores_list)
         sub1 = score_low_info.song_submission
-        # grab random submission
-        sub2 = scores.get_compare_submission_random(sub1.id)
+        # grab random submission if song is uninformed else grab the song closest in devolving space  
+        if(score_low_info.info_score >= INFORMED):
+            close_songs = scores.get_compare_submission_closest(score_low_info, INFORMED)
+            closest_song = close_songs[0]
+            sub2= closest_song.song_submission
+        else:
+            sub2 = scores.get_compare_submission_random(sub1.id)
 
         return success({
             "sub1": SongSubmissionSerializer(sub1).data,

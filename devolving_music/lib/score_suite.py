@@ -1,3 +1,4 @@
+from cmath import inf
 from devolving_music.models.serializers.song_submission import SongSubmissionSerializer
 from devolving_music.models.song_submission import SongSubmission
 from devolving_music.models.song_comparison import SongComparison
@@ -44,6 +45,16 @@ class ScoreSuite:
             "quality_score": self.quality_score,
             "post_peak_score": self.post_peak_score,
         }
+    
+    def devolve_distance(self, sub2: "ScoreSuite") -> int:
+        # use l2 norm to tell distance in devolving space
+        if(sub2.energy_score is not None and sub2.post_peak_score is not None ):
+            energy = (self.energy_score - sub2.energy_score)**2
+            weirdness = (self.post_peak_score - sub2.post_peak_score)**2
+            distance = (energy + weirdness)**0.5
+        else:
+            distance = inf
+        return distance
 
     @staticmethod
     def get_voteable_submissions(Event):
@@ -77,10 +88,5 @@ class ScoreSuite:
                 first_submission__event__exact=Event).order_by('id'))
         return comparison_event_submissions
 
-    @staticmethod
-    def devolve_distance(sub1: "ScoreSuite", sub2: "ScoreSuite") -> int:
-        # use l2 norm to tell distance in devolving space
-        energy = (sub1.energy_score - sub2.energy_score)**2
-        weirdness = (sub1.post_peak_score - sub2.post_peak_score)**2
-        distance = (energy + weirdness)**0.5
-        return distance
+    
+   

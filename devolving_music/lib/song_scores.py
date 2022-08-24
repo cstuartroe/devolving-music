@@ -1,7 +1,7 @@
 from cmath import inf
 from typing import List
 import random
-
+import copy
 
 from devolving_music.lib.elo_scoring import elo_rating
 from devolving_music.models.event import Event
@@ -44,6 +44,17 @@ class SongScores():
         # list
         return self.song_score_dict.get(
             random.choice(key_list)).song_submission
+
+    def get_compare_submission_closest(self, score_suite_obj: "ScoreSuite", information_threshold : int, update_scores = False):
+        if(update_scores):
+            self.get_scores()
+        score_dict = copy.deepcopy(self.song_score_dict)
+        target_id = score_suite_obj.song_submission.id
+        score_dict.pop(target_id)
+        score_list=list(score_dict.values())
+        closest_songs=SongScores.get_distance_sort(score_suite_obj, score_list, info_threshold = information_threshold)
+        return closest_songs
+
 
     def get_compare_submission_linear(self, submission_id) -> SongSubmission:
         if (len(self.comparison_submissions) == 0):
@@ -127,7 +138,7 @@ class SongScores():
     def get_info_sort(
             score_suite_list: List["ScoreSuite"],
             get_informed=False,
-            informed_measure=1) -> List["ScoreSuite"]:
+            informed_threshold=1) -> List["ScoreSuite"]:
         """
         Returns a list of song suites ordered by low information songs with the lowest information score
         randomly shuffled before being added to the list
@@ -136,7 +147,7 @@ class SongScores():
         score_suite_list.sort(key=lambda sub: sub.info_score)
         rightend = 0
         if (get_informed):
-            init = informed_measure
+            init = informed_threshold
         else:
             init = score_suite_list[0].info_score
 
@@ -186,6 +197,15 @@ class SongScores():
                 return song_score[1]
             else:
                 ceiling_check += increase_ceiling
+
+    @staticmethod
+    # sorts in ascending order
+    def get_distance_sort(score_suite_obj: "ScoreSuite",
+            score_suite_list: List["ScoreSuite"], info_threshold = 0) -> List["ScoreSuite"]:
+        score_suite_list.sort(
+            key=lambda sub: score_suite_obj.devolve_distance(sub) if sub.info_score > info_threshold else inf)
+        # return list of keys of dictionary of song objects sorted by energy
+        return score_suite_list
 
     @staticmethod
     # sorts in ascending order

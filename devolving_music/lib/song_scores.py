@@ -1,4 +1,4 @@
-from cmath import inf
+from math import inf
 from typing import List
 import random
 import copy
@@ -19,7 +19,7 @@ class SongScores():
         self.song_score_dict = ScoreSuite.get_song_scores_dict(event)
         self.comparison_submissions = ScoreSuite.get_event_comparisons(event)
 
-    def get_scores(self) -> "dict[int, ScoreSuite]":
+    def update_scores(self) -> "None":
         # calculates scores for all submissions using current comparisons
         # returns a dictionary where keys are the song submission id
         # corresponding to the score suite object
@@ -29,12 +29,16 @@ class SongScores():
 
             SongScores.update_song_rating(compare, song_suite_1, song_suite_2)
 
-        return self.song_score_dict
-
     def get_scores_list(self) -> "list[ScoreSuite]":
         # calculates scores for all submissions using current comparisons
         # returns list of all score suite objects
-        return list(self.get_scores().values())
+        return list(self.update_scores().values())
+
+    def get_scores_dict(self) -> "dict[int, ScoreSuite]":
+        # calculates scores for all submissions using current comparisons
+        # returns list of all score suite objects
+        self.update_scores()
+        return self.song_score_dict
 
     def get_compare_submission_random(self, submission_id) -> SongSubmission:
         key_list = list(self.song_score_dict.keys())
@@ -46,7 +50,7 @@ class SongScores():
         # information threshold is the threshhold at which we start to consider score_suites as being able to be close to score_suite_obj
         # score_suites below this information threshhold are considered to be infinitely far away from score_suite_obj
         if(update_scores):
-            self.get_scores()
+            self.update_scores()
         score_dict = copy.deepcopy(self.song_score_dict)
         target_id = score_suite_obj.song_submission.id
         score_dict.pop(target_id)

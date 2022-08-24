@@ -43,13 +43,15 @@ class SongScores():
             random.choice(key_list)).song_submission
 
     def get_compare_submission_closest(self, score_suite_obj: "ScoreSuite", information_threshold : int, update_scores = False):
+        # information threshold is the threshhold at which we start to consider score_suites as being able to be close to score_suite_obj
+        # score_suites below this information threshhold are considered to be infinitely far away from score_suite_obj
         if(update_scores):
             self.get_scores()
         score_dict = copy.deepcopy(self.song_score_dict)
         target_id = score_suite_obj.song_submission.id
         score_dict.pop(target_id)
         score_list=list(score_dict.values())
-        closest_songs=SongScores.get_distance_sort(score_suite_obj, score_list, info_threshold = information_threshold)
+        closest_songs=SongScores.get_distance_sort(score_suite_obj, score_list, information_threshold)
         return closest_songs
 
 
@@ -141,7 +143,7 @@ class SongScores():
         randomly shuffled before being added to the list
 
         """
-        score_suite_list.sort(key=lambda sub: sub.info_score)
+        score_suite_list = sorted(score_suite_list, key=lambda sub: sub.info_score)
         rightend = 0
         if (get_informed):
             init = informed_threshold
@@ -168,7 +170,7 @@ class SongScores():
     @staticmethod
     def weighted_lowest_info(
             score_suite_list: List["ScoreSuite"],
-            luck_factor=1) -> "ScoreSuite":
+            luck_factor : int) -> "ScoreSuite":
         # luck factor greater than 1 means everything has a chance of being chosen
         # luck factor less than 1 means that some higher informed songs will
         # never be chosen
@@ -198,9 +200,9 @@ class SongScores():
     @staticmethod
     # sorts in ascending order
     def get_distance_sort(score_suite_obj: "ScoreSuite",
-            score_suite_list: List["ScoreSuite"], info_threshold = 0) -> List["ScoreSuite"]:
-        score_suite_list.sort(
-            key=lambda sub: score_suite_obj.devolve_distance(sub) if sub.info_score > info_threshold else inf)
+            score_suite_list: List["ScoreSuite"], info_threshold : int) -> List["ScoreSuite"]:
+        score_suite_list = sorted(score_suite_list ,
+            key=lambda sub: score_suite_obj.devolve_distance(sub) if sub.info_score >= info_threshold else inf)
         # return list of keys of dictionary of song objects sorted by energy
         return score_suite_list
 
@@ -208,7 +210,7 @@ class SongScores():
     # sorts in ascending order
     def get_energy_sort(
             score_suite_list: List["ScoreSuite"]) -> List["ScoreSuite"]:
-        score_suite_list.sort(
+        score_suite_list = sorted(score_suite_list,
             key=lambda sub: sub.energy_score if sub.energy_score is not None else -inf)
         # return list of keys of dictionary of song objects sorted by energy
         return score_suite_list
@@ -217,7 +219,7 @@ class SongScores():
     # sorts in ascending order
     def get_peak_sort(
             score_suite_list: List["ScoreSuite"]) -> List["ScoreSuite"]:
-        score_suite_list.sort(
+        score_suite_list = sorted(score_suite_list,
             key=lambda sub: sub.post_peak_score if sub.post_peak_score is not None else -
             inf)
         # return list of keys of dictionary of song objects sorted by energy

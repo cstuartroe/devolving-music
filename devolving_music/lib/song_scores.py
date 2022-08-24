@@ -32,7 +32,8 @@ class SongScores():
     def get_scores_list(self) -> "list[ScoreSuite]":
         # calculates scores for all submissions using current comparisons
         # returns list of all score suite objects
-        return list(self.update_scores().values())
+        self.update_scores()
+        return list(self.song_score_dict.values())
 
     def get_scores_dict(self) -> "dict[int, ScoreSuite]":
         # calculates scores for all submissions using current comparisons

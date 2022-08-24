@@ -1,4 +1,4 @@
-from cmath import inf
+from math import inf
 from devolving_music.models.serializers.song_submission import SongSubmissionSerializer
 from devolving_music.models.song_submission import SongSubmission
 from devolving_music.models.song_comparison import SongComparison

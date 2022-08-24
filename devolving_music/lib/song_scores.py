@@ -141,7 +141,7 @@ class SongScores():
         randomly shuffled before being added to the list
 
         """
-        score_suite_list.sort(key=lambda sub: sub.info_score)
+        score_suite_list = sorted(score_suite_list, key=lambda sub: sub.info_score)
         rightend = 0
         if (get_informed):
             init = informed_threshold
@@ -199,7 +199,7 @@ class SongScores():
     # sorts in ascending order
     def get_distance_sort(score_suite_obj: "ScoreSuite",
             score_suite_list: List["ScoreSuite"], info_threshold = 0) -> List["ScoreSuite"]:
-        score_suite_list.sort(
+        score_suite_list = sorted(score_suite_list,
             key=lambda sub: score_suite_obj.devolve_distance(sub) if sub.info_score > info_threshold else inf)
         # return list of keys of dictionary of song objects sorted by energy
         return score_suite_list
@@ -208,7 +208,7 @@ class SongScores():
     # sorts in ascending order
     def get_energy_sort(
             score_suite_list: List["ScoreSuite"]) -> List["ScoreSuite"]:
-        score_suite_list.sort(
+        score_suite_list = sorted(score_suite_list,
             key=lambda sub: sub.energy_score if sub.energy_score is not None else -inf)
         # return list of keys of dictionary of song objects sorted by energy
         return score_suite_list
@@ -217,7 +217,7 @@ class SongScores():
     # sorts in ascending order
     def get_peak_sort(
             score_suite_list: List["ScoreSuite"]) -> List["ScoreSuite"]:
-        score_suite_list.sort(
+        score_suite_list = sorted(score_suite_list,
             key=lambda sub: sub.post_peak_score if sub.post_peak_score is not None else -
             inf)
         # return list of keys of dictionary of song objects sorted by energy

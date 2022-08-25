@@ -156,7 +156,7 @@ export default class RateSongs extends Component<Props, State> {
 
         {questionForm("first_better", "Which song is better?")}
         {questionForm("first_peakier", "Which song is more energetic/danceable?")}
-        {questionForm("first_post_peakier", "Which song is weirder?")}
+        {questionForm("first_post_peakier", "Which song is weirder and/or less classy?")}
 
         <div className="col-12">
           <div className="submit-button center">

@@ -1,7 +1,7 @@
-from cmath import inf
+from math import inf
 from typing import List
 import random
-
+import copy
 
 from devolving_music.lib.elo_scoring import elo_rating
 from devolving_music.models.event import Event
@@ -16,31 +16,54 @@ INFO_THRESHOLD = 1
 class SongScores():
 
     def __init__(self, event: Event):
-        self.song_score_dict = ScoreSuite.get_song_scores_dict(event)
+        self._song_score_dict = ScoreSuite.get_song_scores_dict(event)
         self.comparison_submissions = ScoreSuite.get_event_comparisons(event)
+        self.update_scores()
 
-    def get_scores(self) -> "dict[int, ScoreSuite]":
+    def update_scores(self) -> "None":
         # calculates scores for all submissions using current comparisons
+        # returns a dictionary where keys are the song submission id
+        # corresponding to the score suite object
         for compare in self.comparison_submissions:
-            song_suite_1 = self.song_score_dict[compare.first_submission.id]
-            song_suite_2 = self.song_score_dict[compare.second_submission.id]
+            song_suite_1 = self._song_score_dict[compare.first_submission.id]
+            song_suite_2 = self._song_score_dict[compare.second_submission.id]
 
             SongScores.update_song_rating(compare, song_suite_1, song_suite_2)
 
-        return self.song_score_dict
+    @property
+    def scores_list(self) -> "list[ScoreSuite]":
+        # calculates scores for all submissions using current comparisons
+        # returns list of all score suite objects
+        return list(self.scores_dict.values())
+
+    @property
+    def scores_dict(self) -> "dict[int, ScoreSuite]":
+        # calculates scores for all submissions using current comparisons
+        # returns list of all score suite objects
+        return self._song_score_dict
 
     def get_compare_submission_random(self, submission_id) -> SongSubmission:
-        key_list = list(self.song_score_dict.keys())
+        key_list = list(self.scores_dict.keys())
         key_list.remove(submission_id)
-        # once you have a critical number of comparisons then pull from quality
-        # list
-        return self.song_score_dict.get(random.choice(key_list)).song_submission
+        return self.scores_dict.get(
+            random.choice(key_list)).song_submission
+
+    def get_compare_submission_closest(self, score_suite_obj: "ScoreSuite", information_threshold : int) -> List["ScoreSuite"]:
+        # information threshold is the threshhold at which we start to consider score_suites as being able to be close to score_suite_obj
+        # score_suites below this information threshhold are considered to be infinitely far away from score_suite_obj
+        score_dict = {**self.scores_dict}
+        target_id = score_suite_obj.song_submission.id
+        score_dict.pop(target_id)
+        score_list = list(score_dict.values())
+        closest_songs = SongScores.get_distance_sort(score_suite_obj, score_list, information_threshold)
+        return closest_songs
+
 
     def get_compare_submission_linear(self, submission_id) -> SongSubmission:
-        if(len(self.comparison_submissions) == 0):
+        if (len(self.comparison_submissions) == 0):
             return self.get_compare_submission_random(submission_id)
         first_recent = self.comparison_submissions[-1].first_submission
-        if(submission_id == first_recent.id):
+        if (submission_id == first_recent.id):
             return self.get_compare_submission_random(submission_id)
         return first_recent
 
@@ -72,16 +95,19 @@ class SongScores():
         return song_submissions_pruned
 
     def get_dict_from_keys(self, new_keys) -> "dict[int, ScoreSuite]":
-        return {key: self.song_score_dict[key] for key in new_keys}
+        return {key: self.scores_dict[key] for key in new_keys}
 
     def get_final_list(self) -> List["ScoreSuite"]:
 
-        scored_submissions = list(self.get_scores().values())
+        scored_submissions = self.scores_list
 
         # remove all song_submissions with no information
         info_list = SongScores.get_info_sort(scored_submissions)
 
-        informed_list = list(filter(lambda sub: sub.info_score >= INFO_THRESHOLD, info_list))
+        informed_list = list(
+            filter(
+                lambda sub: sub.info_score >= INFO_THRESHOLD,
+                info_list))
 
         # sort by postpeakyness
         peaky_list = SongScores.get_peak_sort(informed_list)
@@ -110,42 +136,85 @@ class SongScores():
 
         return final_quality_list
 
-    ###
-    # static methods can be moved into helper function
-    ###
     @staticmethod
     # sorts in ascending order
     def get_info_sort(
-            score_suite_list: List["ScoreSuite"]) -> List["ScoreSuite"]:
+            score_suite_list: List["ScoreSuite"],
+            get_informed=False,
+            informed_threshold=1) -> List["ScoreSuite"]:
         """
-        Returns a list of song suites ordered by low information songs with the lowest information score 
-        are randomly shuffled before being added to the list
-        
-        """
-        score_suite_list.sort(key=lambda sub: sub.info_score)
-        rightend = 0
-        init = score_suite_list[0].info_score
+        Returns a list of song suites ordered by low information songs with the lowest information score
+        randomly shuffled before being added to the list
 
+        """
+        score_suite_list = sorted(score_suite_list, key=lambda sub: sub.info_score)
+        rightend = 0
+
+        if (not get_informed):
+            informed_threshold = score_suite_list[0].info_score
+        
         for sub in score_suite_list:
             sub_info = sub.info_score
-            if sub_info == init:
+            if sub_info <= informed_threshold:
                 rightend += 1
             else:
                 break
-
-        lowest_info = score_suite_list[0:rightend]
-        random.shuffle(lowest_info)
         other_info = score_suite_list[rightend:]
-        info_submissions = lowest_info + other_info
+        if (get_informed):
+            info_submissions = other_info
+        else:
+            lowest_info = score_suite_list[0:rightend]
+            random.shuffle(lowest_info)
+            info_submissions = lowest_info + other_info
 
         # return list of keys of dictionary of song objects sorted by info
         return info_submissions
 
     @staticmethod
+    def weighted_lowest_info(
+            score_suite_list: List["ScoreSuite"],
+            luck_factor : int) -> "ScoreSuite":
+        #this is a luck factor that determines how skewwed we are to low information songs
+        # when luck factor goes to 0 we will only grab the lowest infromed song
+        # when luck factor is 1 all songs have at some chance of being chosen while low informed songs are more likely 
+        # when luck factor 1>> all songs have roughly equal chance of being chosen
+        info_list = SongScores.get_info_sort(score_suite_list)
+        ceiling = round(((info_list[-1].info_score) + 1) * luck_factor)
+
+        random_num = 0
+        for song_score in info_list:
+            increase_random = ceiling - song_score.info_score
+            if (increase_random > 0):
+                random_num += increase_random
+            else:
+                break
+        select_num = random.randrange(random_num + 1)
+        ceiling_check = 0
+
+        for song_score in info_list:
+            increase_ceiling = ceiling - song_score.info_score
+            if (increase_ceiling < 0):
+                increase_ceiling = 0
+
+            if ((ceiling_check + increase_ceiling) >= select_num):
+                return song_score
+            else:
+                ceiling_check += increase_ceiling
+
+    @staticmethod
+    # sorts in ascending order
+    def get_distance_sort(score_suite_obj: "ScoreSuite",
+            score_suite_list: List["ScoreSuite"], info_threshold : int) -> List["ScoreSuite"]:
+        score_suite_list = sorted(score_suite_list ,
+            key=lambda sub: score_suite_obj.devolve_distance(sub) if sub.info_score >= info_threshold else inf)
+        # return list of keys of dictionary of song objects sorted by energy
+        return score_suite_list
+
+    @staticmethod
     # sorts in ascending order
     def get_energy_sort(
             score_suite_list: List["ScoreSuite"]) -> List["ScoreSuite"]:
-        score_suite_list.sort(
+        score_suite_list = sorted(score_suite_list,
             key=lambda sub: sub.energy_score if sub.energy_score is not None else -inf)
         # return list of keys of dictionary of song objects sorted by energy
         return score_suite_list
@@ -154,7 +223,7 @@ class SongScores():
     # sorts in ascending order
     def get_peak_sort(
             score_suite_list: List["ScoreSuite"]) -> List["ScoreSuite"]:
-        score_suite_list.sort(
+        score_suite_list = sorted(score_suite_list,
             key=lambda sub: sub.post_peak_score if sub.post_peak_score is not None else -
             inf)
         # return list of keys of dictionary of song objects sorted by energy

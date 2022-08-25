@@ -1,3 +1,4 @@
+from math import inf
 from devolving_music.models.serializers.song_submission import SongSubmissionSerializer
 from devolving_music.models.song_submission import SongSubmission
 from devolving_music.models.song_comparison import SongComparison
@@ -38,11 +39,24 @@ class ScoreSuite:
 
     def to_json(self):
         return {
-            "song_submission": SongSubmissionSerializer(self.song_submission).data,
+            "song_submission": SongSubmissionSerializer(
+                self.song_submission).data,
             "energy_score": self.energy_score,
             "quality_score": self.quality_score,
             "post_peak_score": self.post_peak_score,
         }
+    
+    def devolve_distance(self, sub2: "ScoreSuite") -> int:
+        # use l2 norm to tell distance in devolving space
+        sub2_valid = sub2.energy_score is not None and sub2.post_peak_score is not None
+        self_valid = self.energy_score is not None and self.post_peak_score is not None
+        if(sub2_valid and self_valid ):
+            energy = (self.energy_score - sub2.energy_score)**2
+            weirdness = (self.post_peak_score - sub2.post_peak_score)**2
+            distance = (energy + weirdness)**0.5
+        else:
+            distance = inf
+        return distance
 
     @staticmethod
     def get_voteable_submissions(Event):
@@ -75,3 +89,6 @@ class ScoreSuite:
             SongComparison.objects.select_related('first_submission') .filter(
                 first_submission__event__exact=Event).order_by('id'))
         return comparison_event_submissions
+
+    
+   

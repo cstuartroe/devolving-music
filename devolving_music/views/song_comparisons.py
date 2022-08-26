@@ -43,22 +43,23 @@ class SongComparisonsView(LoginRequiredMixin, APIView):
             .values('voter_id').annotate(vcount=Count('id')).order_by('-vcount'))
 
         top_vote_numbers = [v['vcount'] for v in votes_by_user[:NUM_CORE_CONTRIBUTORS]]
-        average_votes = sum(top_vote_numbers)/len(top_vote_numbers)
-        max_relative_votes = (average_votes*MAX_VOTE_RATIO) + (num_submissions*EXTRA_VOTES_PER_SUB)
-
-        if (votes_by_user[0]['voter_id'] == request.user.id) and (votes_by_user[0]['vcount'] >= max_relative_votes):
-            return failure("You have voted too much relative to others. Please give them a chance to catch up.")
+        if(len(top_vote_numbers) != 0):
+            average_votes = sum(top_vote_numbers)/len(top_vote_numbers)
+            max_relative_votes = (average_votes*MAX_VOTE_RATIO) + (num_submissions*EXTRA_VOTES_PER_SUB)
+            if (votes_by_user[0]['voter_id'] == request.user.id) and (votes_by_user[0]['vcount'] >= max_relative_votes):
+                return failure("You have voted too much relative to others. Please give them a chance to catch up.")
 
         # Create the SongComparison object
-
         serializer = SongComparisonSerializer(data={
             **request.data,
             "voter_id": request.user.id,
             "created_at": timezone.now(),
-        })
+            })
 
         if not serializer.is_valid():
             return failure(serializer.errors, status=400)
 
         serializer.save()
         return success(serializer.data)
+
+        

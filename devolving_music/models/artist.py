@@ -28,3 +28,6 @@ class Artist(models.Model):
         artist.save()
 
         return artist
+
+    def __str__(self):
+        return f"{self.name} on {self.platform}"

@@ -45,3 +45,6 @@ class Song(models.Model):
     @staticmethod
     def fuzzy_match(song1: "Song", song2: "Song") -> bool:
         return fuzzy_match(song1.title, song2.title)
+
+    def __str__(self):
+        return f"{repr(self.title)} by {self.artists.all()[0]}"

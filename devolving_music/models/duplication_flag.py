@@ -40,3 +40,6 @@ class DuplicationFlag(models.Model):
 
     def blocks_voting(self) -> bool:
         return self.status in (DuplicationFlag.Status.UNREVIEWED, DuplicationFlag.Status.DUPLICATE)
+
+    def __str__(self):
+        return f"Are {self.new_submission.song} and {self.existing_submission.song} the same?"

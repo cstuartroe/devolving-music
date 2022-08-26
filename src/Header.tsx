@@ -4,7 +4,7 @@ import { Event } from "./models";
 import { getAllowedPlatforms } from "./ChoosePlatform";
 import ResourceManager from "./ResourceManager";
 
-const user_email = (window as unknown as {User: string}).User;
+const w = (window as unknown as {User: string, IsAdmin: boolean});
 
 type HeaderProps = {
   event: Event,
@@ -44,8 +44,14 @@ export default class Header extends Component<HeaderProps, HeaderState>{
       <>
         <div className="row email-bar">
           <div>
-            Currently logged in as {user_email}{' | '}
+            Currently logged in as {w.User}{' | '}
             <a href="/logout">Log out</a>
+            {w.IsAdmin && (
+              <>
+                {' | '}
+                <a href="/admin/">Admin portal</a>
+              </>
+            )}
           </div>
         </div>
         <div className="row header">

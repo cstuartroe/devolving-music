@@ -12,3 +12,7 @@ class SongComparison(models.Model):
     first_peakier = models.BooleanField()
     first_post_peakier = models.BooleanField()
 
+    def __str__(self):
+        return (f"{self.voter.first_name} compared {repr(self.first_submission.song.title)} and "
+                f"{repr(self.second_submission.song.title)}")
+

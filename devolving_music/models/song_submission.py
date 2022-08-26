@@ -35,3 +35,6 @@ class SongSubmission(models.Model):
                 return False
 
         return True
+
+    def __str__(self):
+        return f"{self.submitter.first_name} submitted {repr(self.song.title)} to {self.event}"

@@ -15,3 +15,6 @@ class Event(models.Model):
     @staticmethod
     def disallowed_platform_message(platform: Artist.MusicPlatform):
         return f"{platform.value} submissions not permitted for this event."
+
+    def __str__(self):
+        return f"Event {repr(self.name)}"

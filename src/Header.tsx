@@ -1,6 +1,7 @@
 import React, {Component, CSSProperties} from "react";
 import { Link } from "react-router-dom";
 import { Event } from "./models";
+import { getAllowedPlatforms } from "./ChoosePlatform";
 import ResourceManager from "./ResourceManager";
 
 const user_email = (window as unknown as {User: string}).User;
@@ -50,9 +51,12 @@ export default class Header extends Component<HeaderProps, HeaderState>{
         <div className="row header">
           {this.renderMenuItem("/", this.props.event.name, {fontWeight: 800})}
           {this.state.events.length > 1 && this.renderMenuItem("/event-selector", "Switch events")}
-          {this.renderMenuItem("/submit-playlist", "Submit songs")}
+          {getAllowedPlatforms(this.props.event).length > 0 && (
+            this.renderMenuItem("/submit-playlist", "Submit songs")
+          )}
           {this.renderMenuItem("/rate", "Rate songs")}
           {this.renderMenuItem("/current_playlist", "Current Playlist")}
+          {this.renderMenuItem("/leaderboard", "Leaderboard")}
         </div>
       </>
     );

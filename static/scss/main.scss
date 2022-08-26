@@ -176,3 +176,23 @@ a, a:hover {
     font-size: 20px;
     padding: 1.5vh;
 }
+
+.leaderboard {
+    padding: 1vh 0;
+
+    .leaderboard-row {
+        display: flex;
+
+        .leaderboard-td {
+            flex: 1;
+            font-family: $main_font;
+            padding: 1vh;
+            border: 2px solid white;
+            overflow: hidden;
+
+            a {
+                color: inherit;
+            }
+        }
+    }
+}

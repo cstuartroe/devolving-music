@@ -1,3 +1,5 @@
+import {User} from "./models";
+
 function parsedCookies(): {[key: string]: string} {
   const kvpairs = document.cookie.split(';');
 

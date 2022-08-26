@@ -11,5 +11,5 @@ class ScoreSuitesView(LoginRequiredMixin, View):
     def get(self, _request, event: Event):
         return success([
             score_suite.to_json()
-            for score_suite in SongScores(event).scores_list
+            for score_suite in SongScores.all_from_event(event).scores_list
         ])

@@ -1,7 +1,37 @@
 from math import inf
+
+from devolving_music.lib.elo_scoring import elo_rating
+from devolving_music.models.event import Event
 from devolving_music.models.serializers.song_submission import SongSubmissionSerializer
 from devolving_music.models.song_submission import SongSubmission
 from devolving_music.models.song_comparison import SongComparison
+
+
+def _update_song_rating(
+        comparison_submission: "SongComparison",
+        song1: "ScoreSuite",
+        song2: "ScoreSuite",
+        score_range=30) -> None:
+
+    if (not song1.compare_present(comparison_submission)) and not (song2.compare_present(comparison_submission)):
+        song1.log_comparison(comparison_submission)
+
+        song2.log_comparison(comparison_submission)
+
+        song1.quality_score, song2.quality_score = elo_rating(
+            song1.quality_score, song2.quality_score, score_range, comparison_submission.first_better)
+
+        song1.energy_score, song2.energy_score = elo_rating(
+            song1.energy_score, song2.energy_score, score_range, comparison_submission.first_peakier)
+
+        song1.post_peak_score, song2.post_peak_score = elo_rating(
+            song1.post_peak_score, song2.post_peak_score, score_range, comparison_submission.first_post_peakier)
+
+
+def _get_event_comparisons(event: Event):
+    return list(
+        SongComparison.objects.select_related('first_submission').filter(
+            first_submission__event__exact=event).order_by('id'))
 
 
 class ScoreSuite:
@@ -60,36 +90,25 @@ class ScoreSuite:
         return distance
 
     @staticmethod
-    def get_voteable_submissions(Event):
-
-        voteable_submissions = [
+    def get_voteable_submissions(event: Event):
+        return [
             sub
-
-            for sub in SongSubmission.objects.filter(event__exact=Event).order_by('id')
+            for sub in SongSubmission.objects.filter(event__exact=event).order_by('id')
             if sub.voteable()
-
         ]
-        return voteable_submissions
 
     @staticmethod
-    def get_song_scores_dict(Event):
+    def get_song_scores(event: Event) -> list["ScoreSuite"]:
+        scores_dict = {
+            sub.id: ScoreSuite(sub)
+            for sub in ScoreSuite.get_voteable_submissions(event)
+        }
 
-        song_subs = ScoreSuite.get_voteable_submissions(Event)
+        for comparison in _get_event_comparisons(event):
+            song_suite_1 = scores_dict[comparison.first_submission.id]
+            song_suite_2 = scores_dict[comparison.second_submission.id]
+            _update_song_rating(comparison, song_suite_1, song_suite_2)
 
-        score_objects = list(ScoreSuite(sub) for sub in song_subs)
+        return list(scores_dict.values())
 
-        song_subs_id = list(sub.id for sub in song_subs)
-
-        voteable_submissions_dict = dict(zip(song_subs_id, score_objects))
-        return voteable_submissions_dict
-
-    @staticmethod
-    def get_event_comparisons(Event):
-
-        comparison_event_submissions = list(
-            SongComparison.objects.select_related('first_submission') .filter(
-                first_submission__event__exact=Event).order_by('id'))
-        return comparison_event_submissions
-
-    
    

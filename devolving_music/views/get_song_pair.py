@@ -10,11 +10,8 @@ from devolving_music.lib.song_utils import get_song_color
 from devolving_music.models.event import Event
 from devolving_music.models.serializers.song_submission import SongSubmissionSerializer
 
-#this is a luck factor that determines how skewwed we are to low information songs
-# when luck factor goes to 0 we will only grab the lowest infromed song
-# when luck factor is 1 all songs have at some chance of being chosen while low informed songs are more likely 
-# when luck factor 1>> all songs have roughly equal chance of being chosen
 LUCK_FACTOR = .4
+
 
 class GetSongPairView(LoginRequiredMixin, View):
     @safe_url_params
@@ -26,28 +23,21 @@ class GetSongPairView(LoginRequiredMixin, View):
             return failure(
                 "Not enough songs have been submitted for this event.")
 
-        scores = SongScores(event)
-        scores_list = scores.scores_list
+        scores = SongScores.all_from_event(event).get_info_sort()
 
-        info_list = SongScores.get_info_sort(scores_list)
-
-        # this is the threshhold at which we consider a song informed if we get a 
-        # informed song we find another informed song that is close in devolve space 
-        median_info = info_list[round(len(info_list)/2.0)].info_score
+        # this is the threshold at which we consider a song informed
+        # if we get an informed song we find another informed song that is close in devolve space
+        median_info = scores[round(len(scores)/2.0)].info_score
 
         # grab submission with a tendency to be low information
-        score_low_info = SongScores.weighted_lowest_info(scores_list,LUCK_FACTOR)
+        score_low_info = scores.weighted_lowest_info(LUCK_FACTOR)
         sub1 = score_low_info.song_submission
-        # grab random submission if song is uninformed else grab the song closest in devolving space  
-        if(score_low_info.info_score >= median_info):
-            close_songs = scores.get_compare_submission_closest(score_low_info, median_info)
-            closest_song = close_songs[0]
-            if(score_low_info.devolve_distance(closest_song) != inf):
-                sub2= closest_song.song_submission
-            else:
-                sub2 = scores.get_compare_submission_random(sub1.id)  
-        else:
-            sub2 = scores.get_compare_submission_random(sub1.id)
+        # grab random submission if song is uninformed else grab the song closest in devolving space
+        sub2 = scores.get_compare_submission_random(score_low_info).song_submission
+        if score_low_info.info_score >= median_info:
+            closest_song = scores.get_compare_submission_closest(score_low_info, median_info)
+            if score_low_info.devolve_distance(closest_song) != inf:
+                sub2 = closest_song.song_submission
 
         return success({
             "sub1": SongSubmissionSerializer(sub1).data,

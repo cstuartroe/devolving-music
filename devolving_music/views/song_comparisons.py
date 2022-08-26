@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.utils import timezone
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -6,10 +6,11 @@ from django.db.models import Count
 from rest_framework import permissions
 from rest_framework.views import APIView
 
+from devolving_music.models.event import Event
 from devolving_music.models.song_submission import SongSubmission
 from devolving_music.models.song_comparison import SongComparison
 from devolving_music.models.serializers.song_comparison import SongComparisonSerializer
-from .param_utils import success, failure
+from .param_utils import safe_url_params, success, failure
 
 
 VOTE_QUOTA_PER_SUB = 10
@@ -23,6 +24,17 @@ class SongComparisonsView(LoginRequiredMixin, APIView):
 
     def get_queryset(self):
         return SongComparison.objects.all()
+
+    @safe_url_params
+    def get(self, _request, event: Event):
+        qs = SongComparison.objects.select_related('first_submission').filter(first_submission__event_id=event.id)
+        
+        comparisons = [
+            SongComparisonSerializer(s).data
+            for s in qs
+        ]
+
+        return success(comparisons)
 
     def post(self, request):
         event_id = SongSubmission.objects.get(id=request.data['first_submission_id']).event_id

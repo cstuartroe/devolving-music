@@ -23,6 +23,9 @@ const platformInfo: {[k in Platform]: platformInfo} = {
   Soundcloud: { img_link: "/static/img/soundcloud.png" },
 }
 
+export const getAllowedPlatforms = (event: Event) => (
+  Artist_platform.filter(platform => event[platformAllowances[platform]]))
+
 type Props = {
   event: Event,
 }
@@ -41,8 +44,7 @@ export default class ChoosePlatform extends Component<Props, {}> {
   }
 
   render() {
-    const allowed_platforms = Artist_platform
-      .filter(platform => this.props.event[platformAllowances[platform]]);
+    const allowed_platforms = getAllowedPlatforms(this.props.event);
 
     if (allowed_platforms.length == 1) {
       return <Navigate to={`/submit-playlist/${allowed_platforms[0]}`}/>;

@@ -44,6 +44,7 @@ class ScoreSuite:
             "energy_score": self.energy_score,
             "quality_score": self.quality_score,
             "post_peak_score": self.post_peak_score,
+            "info_score": self.info_score,
         }
     
     def devolve_distance(self, sub2: "ScoreSuite") -> int:

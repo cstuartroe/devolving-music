@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from django.db.models.fields import BigAutoField, CharField, DateField, DateTimeField, BooleanField
+from django.db.models.fields import AutoField, BigAutoField, CharField, DateField, DateTimeField, BooleanField, EmailField
 from django.db.models.fields.related import ManyToManyField, ForeignKey
 from django.db.models.fields.reverse_related import ManyToOneRel, ManyToManyRel
 from django.contrib.auth.models import User
@@ -48,7 +48,7 @@ class Command(BaseCommand):
 
                 if t is ManyToOneRel or t is ManyToManyRel:
                     pass
-                elif t is BigAutoField:
+                elif t is AutoField or t is BigAutoField:
                     type_string = "number"
                 elif t is CharField:
                     if field.choices is not None:
@@ -63,6 +63,8 @@ class Command(BaseCommand):
                     type_string = "string"
                 elif t is BooleanField:
                     type_string = "boolean"
+                elif t is EmailField:
+                    type_string = "string"
                 elif model is User:
                     pass  # Don't need all the extra django admin junk
                 elif t is ForeignKey:

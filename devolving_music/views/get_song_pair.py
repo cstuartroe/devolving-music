@@ -14,7 +14,7 @@ from devolving_music.models.serializers.song_submission import SongSubmissionSer
 # when luck factor goes to 0 we will only grab the lowest infromed song
 # when luck factor is 1 all songs have at some chance of being chosen while low informed songs are more likely 
 # when luck factor 1>> all songs have roughly equal chance of being chosen
-LUCK_FACTOR= 1
+LUCK_FACTOR = .4
 
 class GetSongPairView(LoginRequiredMixin, View):
     @safe_url_params

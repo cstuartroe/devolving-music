@@ -173,7 +173,7 @@ class SongScores():
     @staticmethod
     def weighted_lowest_info(
             score_suite_list: List["ScoreSuite"],
-            luck_factor : int) -> "ScoreSuite":
+            luck_factor: float) -> "ScoreSuite":
         #this is a luck factor that determines how skewwed we are to low information songs
         # when luck factor goes to 0 we will only grab the lowest infromed song
         # when luck factor is 1 all songs have at some chance of being chosen while low informed songs are more likely 

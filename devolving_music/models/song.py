@@ -15,7 +15,7 @@ class Song(models.Model):
         except Song.DoesNotExist:
             song = Song(platform_id=platform_id)
 
-        song.title = title
+        song.title = title[:128]
         song.save()
 
         song.artists.set(artists)

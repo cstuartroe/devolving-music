@@ -41,6 +41,7 @@ a, a:hover {
     background-color: white;
     color: black;
     display: flex;
+    flex-wrap: wrap;
 }
 
 .email-bar div {
@@ -52,7 +53,6 @@ a, a:hover {
 .header {
     margin-bottom: 20px;
     display: flex;
-    height: 12vh;
 }
 
 .header a, .platform-tile a {
@@ -64,12 +64,13 @@ a, a:hover {
     flex: 1;
     text-align: center;
     display: flex;
+    padding: 1vh;
 
     div {
         margin: auto;
 
         a {
-            font-size: 28px;
+            font-size: 20px;
             margin: auto;
         }
     }

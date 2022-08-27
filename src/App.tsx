@@ -63,8 +63,8 @@ class App extends Component<{}, AppState> {
             <Header event={event}/>
 
             <div className="row">
-              <div className="col-2"/>
-              <div className="col-8">
+              <div className="col-12 col-md-2"/>
+              <div className="col-12 col-md-8">
                 <Routes>
                   <Route path="/">
                     <Route index element={<Home event={event}/>}/>

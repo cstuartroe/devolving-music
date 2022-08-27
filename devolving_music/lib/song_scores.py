@@ -99,14 +99,55 @@ class SongScores:
 
         return comeup + cooldown
 
+    def remove_duplicates_by_first_artist(self) -> "SongScores":
+        top_song_by_artist: dict[int, ScoreSuite] = {}
+
+        for score in self.scores_list:
+            first_artist_id = score.song_submission.song.artists.order_by('id').all()[0].id
+            if first_artist_id in top_song_by_artist:
+                if top_song_by_artist[first_artist_id].quality_score < score.quality_score:
+                    top_song_by_artist[first_artist_id] = score
+            else:
+                top_song_by_artist[first_artist_id] = score
+
+        top_submission_ids = set(
+            score.song_submission.id
+            for score in top_song_by_artist.values()
+        )
+
+        return SongScores([
+            score
+            for score in self.scores_list
+            if score.song_submission.id in top_submission_ids
+        ])
+
+    def quality_filter(self, length_limit: int, neighborhood_width: int = 3) -> "SongScores":
+        scores = [*self.scores_list]
+
+        while len(scores) > length_limit:
+            to_delete: list[int] = []
+
+            for i, score in enumerate(scores):
+                neighborhood: list[ScoreSuite] = scores[max(0, i-neighborhood_width):i+neighborhood_width]
+                neighborhood_quality = [s.quality_score for s in neighborhood]
+                if score.quality_score == min(neighborhood_quality):
+                    to_delete.append(i)
+
+            to_delete = to_delete[:len(scores)-length_limit]
+            if len(to_delete) == 0:
+                raise ValueError
+
+            for i in to_delete[::-1]:
+                del scores[i]
+
+        return SongScores(scores)
+
     def get_final_list(self, length_limit=DEFAULT_PLAYLIST_LENGTH) -> "SongScores":
-        out = self.get_playlist_sort().scores_list
+        return self.get_playlist_sort().remove_duplicates_by_first_artist().quality_filter(length_limit)
 
         # if len(final_list) is above length limit
         # remove_index=check_quality(final_list,len(energy_sorted)-lengthlimit)
         # final_quality_list=remove(energy_sorted,remove_index)
-
-        return SongScores(out)
 
     def get_info_sort(self, get_informed=False, informed_threshold=1) -> "SongScores":
         """

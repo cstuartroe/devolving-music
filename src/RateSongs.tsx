@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { safePost } from "./utils";
 import {Event, SongSubmission} from "./models";
 import SongsTile from "./SongsTile";
+import {ScoreSuite} from "./ResourceManager";
 
 
 const questionIds = ["first_better", "first_peakier", "first_post_peakier"] as const;
@@ -12,6 +13,25 @@ type FormResponse = {
   [q in QuestionId]?: boolean;
 }
 
+const stats_cols: [keyof ScoreSuite, string][] = [
+  ['quality_score', 'Q'],
+  ['energy_score', 'E'],
+  ['post_peak_score', 'P'],
+  ['info_score', 'I'],
+];
+
+function Stats(props: {score: ScoreSuite}) {
+  return (
+    <div className="row">
+      {stats_cols.map((col, i) => (
+        <div className="col-3" key={i}>
+          <p>{col[1]}: {Math.round(props.score[col[0]] as number)}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 type Props = {
   event: Event,
 }
@@ -19,10 +39,11 @@ type Props = {
 type State = {
   status: "ready" | "pending",
   message: string,
-  sub1?: SongSubmission,
-  sub2?: SongSubmission,
+  score1?: ScoreSuite,
+  score2?: ScoreSuite,
   color1?: string,
   color2?: string,
+  showScores: boolean,
   response: FormResponse,
 }
 
@@ -33,6 +54,7 @@ export default class RateSongs extends Component<Props, State> {
       status: "pending",
       message: "",
       response: {},
+      showScores: false,
     };
   }
 
@@ -88,8 +110,8 @@ export default class RateSongs extends Component<Props, State> {
     })
 
     safePost("/api/song_comparisons", {
-      first_submission_id: this.state.sub1?.id,
-      second_submission_id: this.state.sub2?.id,
+      first_submission_id: this.state.score1?.song_submission.id,
+      second_submission_id: this.state.score2?.song_submission.id,
       ...this.state.response,
     }).then(res => {
       if (res.ok) {
@@ -106,7 +128,7 @@ export default class RateSongs extends Component<Props, State> {
   }
 
   render() {
-    const { sub1, sub2, color1, color2, status, message, response } = this.state;
+    const { score1, score2, color1, color2, status, message, response } = this.state;
 
     const content = () => {
       if (status === "pending") {
@@ -115,10 +137,19 @@ export default class RateSongs extends Component<Props, State> {
             <img src="/static/img/spinner.gif" alt="Please wait a moment."/>
           </div>
         );
-      } else if (sub1 === undefined || sub2 === undefined) {
+      } else if (score1 === undefined || score2 === undefined) {
         return null;
       } else {
-        return <SongsTile subs={[sub1, sub2]}/>;
+        return (
+          <>
+            <SongsTile subs={[score1.song_submission, score2.song_submission]}/>
+            {this.state.showScores && [score1, score2].map((score, i) => (
+              <div className="col-6" key={i}>
+                <Stats score={score}/>
+              </div>
+            ))}
+          </>
+        );
       }
     }
 
@@ -143,8 +174,8 @@ export default class RateSongs extends Component<Props, State> {
           <h2>{text}</h2>
         </div>
 
-        {questionButton(qid, true, sub1, color1)}
-        {questionButton(qid, false, sub2, color2)}
+        {questionButton(qid, true, score1?.song_submission, color1)}
+        {questionButton(qid, false, score2?.song_submission, color2)}
       </div>
     );
 

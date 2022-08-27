@@ -1,21 +1,15 @@
 import React, { Component } from "react";
 
-import { Event, SongSubmission } from "./models";
+import { Event } from "./models";
 import SongsTile from "./SongsTile";
-
-type SongScore = {
-  song_submission: SongSubmission,
-  energy_score: number,
-  quality_score: number,
-  post_peak_score: number,
-}
+import {ScoreSuite} from "./ResourceManager";
 
 type Props = {
   event: Event
 };
 
 type State = {
-  song_scores: SongScore[],
+  song_scores: ScoreSuite[],
 }
 
 export default class CurrentPlaylist extends Component<Props, State> {

@@ -11,5 +11,5 @@ class CurrentPlaylist(LoginRequiredMixin, View):
     def get(self, _request, event: Event):
         return success([
             score.to_json()
-            for score in SongScores(event).get_final_list()
+            for score in SongScores.all_from_event(event).get_final_list().scores_list
         ])

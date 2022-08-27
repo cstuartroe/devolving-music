@@ -1,76 +1,60 @@
 from math import inf
-from typing import List
 import random
-import copy
+from typing import Union
 
-from devolving_music.lib.elo_scoring import elo_rating
 from devolving_music.models.event import Event
-from devolving_music.models.song_submission import SongSubmission
-from devolving_music.models.song_comparison import SongComparison
 from devolving_music.lib.score_suite import ScoreSuite
 
 PEAK_PROPORTION = 0.7
 INFO_THRESHOLD = 1
+DEFAULT_PLAYLIST_LENGTH = 100
 
 
-class SongScores():
+class SongScores:
 
-    def __init__(self, event: Event):
-        self._song_score_dict = ScoreSuite.get_song_scores_dict(event)
-        self.comparison_submissions = ScoreSuite.get_event_comparisons(event)
-        self.update_scores()
+    def __init__(self, song_scores: list[ScoreSuite]):
+        self._song_scores = song_scores
 
-    def update_scores(self) -> "None":
-        # calculates scores for all submissions using current comparisons
-        # returns a dictionary where keys are the song submission id
-        # corresponding to the score suite object
-        for compare in self.comparison_submissions:
-            song_suite_1 = self._song_score_dict[compare.first_submission.id]
-            song_suite_2 = self._song_score_dict[compare.second_submission.id]
+    def __getitem__(self, s: Union[slice, int]) -> Union["SongScores", ScoreSuite]:
+        if isinstance(s, slice):
+            return SongScores(self.scores_list.__getitem__(s))
+        else:
+            return self.scores_list[s]
 
-            SongScores.update_song_rating(compare, song_suite_1, song_suite_2)
+    def __add__(self, other: "SongScores") -> "SongScores":
+        return SongScores(self.scores_list + other.scores_list)
+
+    def __len__(self):
+        return len(self.scores_list)
+
+    @classmethod
+    def all_from_event(cls, event: Event):
+        return cls(ScoreSuite.get_song_scores(event))
 
     @property
-    def scores_list(self) -> "list[ScoreSuite]":
+    def scores_list(self) -> list[ScoreSuite]:
         # calculates scores for all submissions using current comparisons
         # returns list of all score suite objects
-        return list(self.scores_dict.values())
+        return self._song_scores
 
-    @property
-    def scores_dict(self) -> "dict[int, ScoreSuite]":
-        # calculates scores for all submissions using current comparisons
-        # returns list of all score suite objects
-        return self._song_score_dict
+    def scores_excluding(self, score_suite: ScoreSuite):
+        return [
+            score
+            for score in self.scores_list
+            if score.song_submission.id != score_suite.song_submission.id
+        ]
 
-    def get_compare_submission_random(self, submission_id) -> SongSubmission:
-        key_list = list(self.scores_dict.keys())
-        key_list.remove(submission_id)
-        return self.scores_dict.get(
-            random.choice(key_list)).song_submission
+    def get_compare_submission_random(self, score_suite: ScoreSuite) -> ScoreSuite:
+        return random.choice(self.scores_excluding(score_suite))
 
-    def get_compare_submission_closest(self, score_suite_obj: "ScoreSuite", information_threshold : int) -> List["ScoreSuite"]:
-        # information threshold is the threshhold at which we start to consider score_suites as being able to be close to score_suite_obj
+    def get_compare_submission_closest(self, from_score: ScoreSuite, information_threshold: int) -> ScoreSuite:
+        # information threshold is the threshold at which we start to consider score_suites as being able to be close to score_suite_obj
         # score_suites below this information threshhold are considered to be infinitely far away from score_suite_obj
-        score_dict = {**self.scores_dict}
-        target_id = score_suite_obj.song_submission.id
-        score_dict.pop(target_id)
-        score_list = list(score_dict.values())
-        closest_songs = SongScores.get_distance_sort(score_suite_obj, score_list, information_threshold)
-        return closest_songs
+        closest_songs = self.get_distance_sort(from_score, information_threshold)
+        return closest_songs[0]
 
-
-    def get_compare_submission_linear(self, submission_id) -> SongSubmission:
-        if (len(self.comparison_submissions) == 0):
-            return self.get_compare_submission_random(submission_id)
-        first_recent = self.comparison_submissions[-1].first_submission
-        if (submission_id == first_recent.id):
-            return self.get_compare_submission_random(submission_id)
-        return first_recent
-
-    def mvg_avg(
-            self,
-            song_submissions_sorted: List["ScoreSuite"]) -> List[int]:
-        mvg_avg = [None] * len(song_submissions_sorted)
+    def moving_avg(self, song_submissions_sorted: list["ScoreSuite"]) -> list[int]:
+        out = [None] * len(song_submissions_sorted)
 
         # song_submissions_scored is a list of song submissions
         # that have been sorted into prepeak,peak,and post peak
@@ -79,11 +63,11 @@ class SongScores():
         # that have been scored with current comparisons
         # get a moving average corresponding to quality score
 
-        return mvg_avg
+        return out
 
     def check_quality(self,
-                      song_submissions_sorted: List["ScoreSuite"],
-                      remove: int) -> List["ScoreSuite"]:
+                      song_submissions_sorted: list["ScoreSuite"],
+                      remove: int) -> list["ScoreSuite"]:
 
         song_submissions_pruned = song_submissions_sorted
 
@@ -94,97 +78,82 @@ class SongScores():
 
         return song_submissions_pruned
 
-    def get_dict_from_keys(self, new_keys) -> "dict[int, ScoreSuite]":
-        return {key: self.scores_dict[key] for key in new_keys}
+    def informed(self) -> "SongScores":
+        return SongScores([
+            sub
+            for sub in self.scores_list
+            if sub.info_score >= INFO_THRESHOLD
+        ])
 
-    def get_final_list(self) -> List["ScoreSuite"]:
-
-        scored_submissions = self.scores_list
-
-        # remove all song_submissions with no information
-        info_list = SongScores.get_info_sort(scored_submissions)
-
-        informed_list = list(
-            filter(
-                lambda sub: sub.info_score >= INFO_THRESHOLD,
-                info_list))
-
+    def get_playlist_sort(self) -> "SongScores":
         # sort by postpeakyness
-        peaky_list = SongScores.get_peak_sort(informed_list)
+        peaky_list = self.informed().get_peak_sort()
         peak_loc = int(PEAK_PROPORTION * len(peaky_list))
         # Break peaky_sorted into two bins pre peak and post peak
         pre_peak = peaky_list[:peak_loc]
         post_peak = peaky_list[peak_loc:]
         # energy_sorted
         comeup = SongScores.get_energy_sort(pre_peak)
-        cooldown = SongScores.get_energy_sort(post_peak)
-        cooldown = cooldown[::-1]
+        cooldown = SongScores.get_energy_sort(post_peak)[::-1]
 
-        # final_list is the song submission keys properly sorted
-        final_list = comeup + cooldown
+        return comeup + cooldown
 
-        return final_list
-
-    def get_quality_list(self,
-                         length_limit=300) -> List["ScoreSuite"]:
-
-        final_quality_list = []
+    def get_final_list(self, length_limit=DEFAULT_PLAYLIST_LENGTH) -> "SongScores":
+        out = self.get_playlist_sort().scores_list
 
         # if len(final_list) is above length limit
         # remove_index=check_quality(final_list,len(energy_sorted)-lengthlimit)
         # final_quality_list=remove(energy_sorted,remove_index)
 
-        return final_quality_list
+        return SongScores(out)
 
-    @staticmethod
-    # sorts in ascending order
-    def get_info_sort(
-            score_suite_list: List["ScoreSuite"],
-            get_informed=False,
-            informed_threshold=1) -> List["ScoreSuite"]:
+    def get_info_sort(self, get_informed=False, informed_threshold=1) -> "SongScores":
         """
         Returns a list of song suites ordered by low information songs with the lowest information score
         randomly shuffled before being added to the list
 
         """
-        score_suite_list = sorted(score_suite_list, key=lambda sub: sub.info_score)
-        rightend = 0
+        score_suite_list = sorted(self.scores_list, key=lambda sub: sub.info_score)
 
-        if (not get_informed):
+        if not get_informed:
             informed_threshold = score_suite_list[0].info_score
-        
+
+        rightend = 0
         for sub in score_suite_list:
-            sub_info = sub.info_score
-            if sub_info <= informed_threshold:
+            if sub.info_score <= informed_threshold:
                 rightend += 1
             else:
                 break
+
         other_info = score_suite_list[rightend:]
-        if (get_informed):
+
+        if get_informed:
             info_submissions = other_info
         else:
-            lowest_info = score_suite_list[0:rightend]
+            lowest_info = score_suite_list[:rightend]
             random.shuffle(lowest_info)
             info_submissions = lowest_info + other_info
 
-        # return list of keys of dictionary of song objects sorted by info
-        return info_submissions
+        return SongScores(info_submissions)
 
-    @staticmethod
-    def weighted_lowest_info(
-            score_suite_list: List["ScoreSuite"],
-            luck_factor: float) -> "ScoreSuite":
-        #this is a luck factor that determines how skewwed we are to low information songs
-        # when luck factor goes to 0 we will only grab the lowest infromed song
-        # when luck factor is 1 all songs have at some chance of being chosen while low informed songs are more likely 
-        # when luck factor 1>> all songs have roughly equal chance of being chosen
-        info_list = SongScores.get_info_sort(score_suite_list)
-        ceiling = round(((info_list[-1].info_score) + 1) * luck_factor)
+    def weighted_lowest_info(self, luck_factor: float) -> ScoreSuite:
+        """Return a score suite at random, weighted towards lower information scores to a degree
+           controlled by luck_factor.
+
+           Args:
+               luck_factor: A float determining how strongly low-information scores are favored.
+                   - A luck_factor of 0 forces one of the scores tied for lowest information to be chosen.
+                   - A luck_factor of less than 1 makes it impossible for the most-informed scores to be chosen.
+                   - A luck_factor of 1 allows any score to be chosen, though low-information scores are likelier.
+                   - As luck_factor increases past 1, the odds of choosing each score approaches equal.
+        """
+        info_list = self.get_info_sort().scores_list
+        ceiling = round((info_list[-1].info_score + 1) * luck_factor)
 
         random_num = 0
         for song_score in info_list:
             increase_random = ceiling - song_score.info_score
-            if (increase_random > 0):
+            if increase_random > 0:
                 random_num += increase_random
             else:
                 break
@@ -193,69 +162,32 @@ class SongScores():
 
         for song_score in info_list:
             increase_ceiling = ceiling - song_score.info_score
-            if (increase_ceiling < 0):
+            if increase_ceiling < 0:
                 increase_ceiling = 0
 
-            if ((ceiling_check + increase_ceiling) >= select_num):
+            if ceiling_check + increase_ceiling >= select_num:
                 return song_score
             else:
                 ceiling_check += increase_ceiling
 
-    @staticmethod
     # sorts in ascending order
-    def get_distance_sort(score_suite_obj: "ScoreSuite",
-            score_suite_list: List["ScoreSuite"], info_threshold : int) -> List["ScoreSuite"]:
-        score_suite_list = sorted(score_suite_list ,
-            key=lambda sub: score_suite_obj.devolve_distance(sub) if sub.info_score >= info_threshold else inf)
-        # return list of keys of dictionary of song objects sorted by energy
-        return score_suite_list
+    def get_distance_sort(self, from_score: "ScoreSuite", info_threshold: int) -> "SongScores":
+        score_suite_list = sorted(
+            self.scores_list,
+            key=lambda sub: from_score.devolve_distance(sub) if sub.info_score >= info_threshold else inf)
+        return SongScores(score_suite_list)
 
-    @staticmethod
     # sorts in ascending order
-    def get_energy_sort(
-            score_suite_list: List["ScoreSuite"]) -> List["ScoreSuite"]:
-        score_suite_list = sorted(score_suite_list,
+    def get_energy_sort(self) -> "SongScores":
+        score_suite_list = sorted(
+            self.scores_list,
             key=lambda sub: sub.energy_score if sub.energy_score is not None else -inf)
-        # return list of keys of dictionary of song objects sorted by energy
-        return score_suite_list
+        return SongScores(score_suite_list)
 
-    @staticmethod
     # sorts in ascending order
-    def get_peak_sort(
-            score_suite_list: List["ScoreSuite"]) -> List["ScoreSuite"]:
-        score_suite_list = sorted(score_suite_list,
-            key=lambda sub: sub.post_peak_score if sub.post_peak_score is not None else -
-            inf)
-        # return list of keys of dictionary of song objects sorted by energy
-        return score_suite_list
+    def get_peak_sort(self) -> "SongScores":
+        score_suite_list = sorted(
+            self.scores_list,
+            key=lambda sub: sub.post_peak_score if sub.post_peak_score is not None else -inf)
+        return SongScores(score_suite_list)
 
-    @staticmethod
-    def compare_not_found(
-            comparison_submission: "SongComparison",
-            song1: "ScoreSuite",
-            song2: "ScoreSuite") -> bool:
-
-        return not song1.compare_present(
-            comparison_submission) and not song2.compare_present(comparison_submission)
-
-    @staticmethod
-    def update_song_rating(
-            comparison_submission: "SongComparison",
-            song1: "ScoreSuite",
-            song2: "ScoreSuite",
-            score_range=30) -> None:
-
-        if SongScores.compare_not_found(comparison_submission, song1, song2):
-
-            song1.log_comparison(comparison_submission)
-
-            song2.log_comparison(comparison_submission)
-
-            song1.quality_score, song2.quality_score = elo_rating(
-                song1.quality_score, song2.quality_score, score_range, comparison_submission.first_better)
-
-            song1.energy_score, song2.energy_score = elo_rating(
-                song1.energy_score, song2.energy_score, score_range, comparison_submission.first_peakier)
-
-            song1.post_peak_score, song2.post_peak_score = elo_rating(
-                song1.post_peak_score, song2.post_peak_score, score_range, comparison_submission.first_post_peakier)

@@ -1,6 +1,6 @@
 from math import inf
 import random
-from typing import Union
+from typing import Union, Callable
 
 from devolving_music.models.event import Event
 from devolving_music.lib.score_suite import ScoreSuite
@@ -37,21 +37,22 @@ class SongScores:
         # returns list of all score suite objects
         return self._song_scores
 
-    def scores_excluding(self, score_suite: ScoreSuite):
-        return [
+    def scores_excluding(self, score_suite: ScoreSuite) -> "SongScores":
+        return SongScores([
             score
             for score in self.scores_list
             if score.song_submission.id != score_suite.song_submission.id
-        ]
+        ])
 
     def get_compare_submission_random(self, score_suite: ScoreSuite) -> ScoreSuite:
-        return random.choice(self.scores_excluding(score_suite))
+        return random.choice(self.scores_excluding(score_suite).scores_list)
 
-    def get_compare_submission_closest(self, from_score: ScoreSuite, information_threshold: int) -> ScoreSuite:
+    def get_compare_submission_closest(self, from_score: ScoreSuite, information_threshold: int,
+                                       num_closest=6) -> ScoreSuite:
         # information threshold is the threshold at which we start to consider score_suites as being able to be close to score_suite_obj
         # score_suites below this information threshhold are considered to be infinitely far away from score_suite_obj
-        closest_songs = self.get_distance_sort(from_score, information_threshold)
-        return closest_songs[0]
+        closest_songs = self.get_distance_sort(from_score, information_threshold)[:num_closest]
+        return random.choice(closest_songs)
 
     def moving_avg(self, song_submissions_sorted: list["ScoreSuite"]) -> list[int]:
         out = [None] * len(song_submissions_sorted)
@@ -93,7 +94,7 @@ class SongScores:
         pre_peak = peaky_list[:peak_loc]
         post_peak = peaky_list[peak_loc:]
         # energy_sorted
-        comeup = SongScores.get_energy_sort(pre_peak)
+        comeup = SongScores.get_combined_sort(pre_peak)
         cooldown = SongScores.get_energy_sort(post_peak)[::-1]
 
         return comeup + cooldown
@@ -170,24 +171,28 @@ class SongScores:
             else:
                 ceiling_check += increase_ceiling
 
+    def custom_sort(self, sort_key: Callable[[ScoreSuite], float]):
+        return SongScores(sorted(self.scores_list, key=sort_key))
+
     # sorts in ascending order
     def get_distance_sort(self, from_score: "ScoreSuite", info_threshold: int) -> "SongScores":
-        score_suite_list = sorted(
-            self.scores_list,
-            key=lambda sub: from_score.devolve_distance(sub) if sub.info_score >= info_threshold else inf)
-        return SongScores(score_suite_list)
+        return self.scores_excluding(from_score).custom_sort(
+            lambda score: from_score.devolve_distance(score) if score.info_score >= info_threshold else inf)
 
     # sorts in ascending order
     def get_energy_sort(self) -> "SongScores":
-        score_suite_list = sorted(
-            self.scores_list,
-            key=lambda sub: sub.energy_score if sub.energy_score is not None else -inf)
-        return SongScores(score_suite_list)
+        return self.custom_sort(lambda score: score.energy_score if score.energy_score is not None else -inf)
 
     # sorts in ascending order
     def get_peak_sort(self) -> "SongScores":
-        score_suite_list = sorted(
-            self.scores_list,
-            key=lambda sub: sub.post_peak_score if sub.post_peak_score is not None else -inf)
-        return SongScores(score_suite_list)
+        return self.custom_sort(lambda score: score.post_peak_score if score.post_peak_score is not None else -inf)
+
+    def get_combined_sort(self) -> "SongScores":
+        def combined_score(score: ScoreSuite):
+            if score.energy_score is None or score.post_peak_score is None:
+                return -inf
+
+            return score.energy_score + score.post_peak_score/2
+
+        return self.custom_sort(combined_score)
 

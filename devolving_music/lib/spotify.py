@@ -6,9 +6,6 @@ import re
 spotify_client = spotipy.Spotify(
     auth_manager=SpotifyClientCredentials(),
 )
-playlist_write_client = spotipy.Spotify(
-    auth_manager=SpotifyOAuth(scope="playlist-modify-public"),
-)
 
 
 def get_song_data(playlist_id: str):
@@ -32,6 +29,10 @@ def get_song_data(playlist_id: str):
 
 
 def add_songs(playlist_id: str, song_ids: list[str]):
+    playlist_write_client = spotipy.Spotify(
+        auth_manager=SpotifyOAuth(scope="playlist-modify-public"),
+    )
+
     existing_items = spotify_client.playlist_items(playlist_id)['items']
     existing_track_ids = [
         item['track']['id']

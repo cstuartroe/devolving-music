@@ -6,6 +6,7 @@ class Event(models.Model):
     name = models.CharField(max_length=64)
     date = models.DateField()
     created_at = models.DateTimeField()
+    spotify_playlist_id = models.CharField(max_length=32, null=True)
     image = models.CharField(max_length=128)
     visible = models.BooleanField()
     allow_spotify = models.BooleanField()
@@ -17,4 +18,4 @@ class Event(models.Model):
         return f"{platform.value} submissions not permitted for this event."
 
     def __str__(self):
-        return f"Event {repr(self.name)}"
+        return f"Event {repr(self.name)} (id={self.id})"

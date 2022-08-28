@@ -1,10 +1,13 @@
 import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
+from spotipy.oauth2 import SpotifyOAuth, SpotifyClientCredentials
 import requests
 import re
 
 spotify_client = spotipy.Spotify(
     auth_manager=SpotifyClientCredentials(),
+)
+playlist_write_client = spotipy.Spotify(
+    auth_manager=SpotifyOAuth(scope="playlist-modify-public"),
 )
 
 
@@ -26,6 +29,16 @@ def get_song_data(playlist_id: str):
             break
 
         offset += 100
+
+
+def add_songs(playlist_id: str, song_ids: list[str]):
+    existing_items = spotify_client.playlist_items(playlist_id)['items']
+    existing_track_ids = [
+        item['track']['id']
+        for item in existing_items
+    ]
+    playlist_write_client.playlist_remove_all_occurrences_of_items(playlist_id, existing_track_ids)
+    playlist_write_client.playlist_add_items(playlist_id, song_ids)
 
 
 def get_spotify_embed_color(platform_id: str):

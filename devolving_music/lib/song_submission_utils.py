@@ -47,7 +47,7 @@ def submit_songs(songs: Iterable[Song], event: Event, submitter: User) -> list[S
     already_submitted_by_user = SongSubmission.objects.filter(submitter=submitter, event=event).count()
 
     if already_submitted_by_user + len(to_submit) > SONG_SUBMISSION_QUOTA:
-        raise QuotaExceededError(f"Number of songs would exceed quota ({len(already_submitted_by_user)} songs "
+        raise QuotaExceededError(f"Number of songs would exceed quota ({already_submitted_by_user} songs "
                                  f"already submitted, currently attempting to submit {len(to_submit)} songs, "
                                  f"quota is {SONG_SUBMISSION_QUOTA}).")
 

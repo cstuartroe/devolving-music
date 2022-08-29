@@ -40,3 +40,5 @@ class SubmitSpotifyPlaylistView(LoginRequiredMixin, View):
             return success([SongSubmissionSerializer(sub).data for sub in submissions])
         except QuotaExceededError as e:
             return failure(str(e))
+        except BaseException as e:
+            return failure(str(e), status=500)

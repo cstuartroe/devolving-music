@@ -7,7 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from devolving_music.lib.score_suite import ScoreSuite
 from devolving_music.lib.song_scores import SongScores
 from .param_utils import safe_url_params, success, failure
-from devolving_music.lib.song_utils import get_song_color
+from devolving_music.lib.spotify import SPOTIFY_GREEN
 from devolving_music.models.event import Event
 
 LUCK_FACTOR = .4
@@ -43,7 +43,7 @@ class GetSongPairView(LoginRequiredMixin, View):
         return success({
             "score1": score_low_info.to_json(),
             "score2": score2.to_json(),
-            "color1": get_song_color(score_low_info.song_submission.song),
-            "color2": get_song_color(score2.song_submission.song),
+            "color1": SPOTIFY_GREEN,
+            "color2": SPOTIFY_GREEN,
             "showScores": bool(os.getenv("SHOW_SCORES")),
         })

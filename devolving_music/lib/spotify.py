@@ -3,6 +3,8 @@ from spotipy.oauth2 import SpotifyOAuth, SpotifyClientCredentials
 import requests
 import re
 
+SPOTIFY_GREEN = "1DB954"
+
 spotify_client = spotipy.Spotify(
     auth_manager=SpotifyClientCredentials(),
 )

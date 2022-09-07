@@ -13,6 +13,8 @@ function round(n: number, digits: number) {
 type LeaderboardProps<T> = {
   items: T[],
   columns: [string, keyof T][],
+  initial_sort_key?: keyof T,
+  initial_ascending?: boolean,
 }
 
 type LeaderboardState<T> = {
@@ -24,8 +26,8 @@ class Leaderboard<T> extends Component<LeaderboardProps<T>, LeaderboardState<T>>
   constructor(props: LeaderboardProps<T>) {
     super(props);
     this.state = {
-      sort_key: props.columns[0][1],
-      ascending: false,
+      sort_key: props.initial_sort_key || props.columns[0][1],
+      ascending: props.initial_ascending || false,
     }
   }
 
@@ -196,21 +198,28 @@ export default class LeaderboardPage extends Component<Props, State> {
             </p>
           </div>
         </div>
-        <Leaderboard items={this.computeUserTableValues()} columns={[
-          ['Name', 'name'],
-          ['Email address', 'email'],
-          ['Songs submitted', 'submissions'],
-          ['Votes submitted', 'votes'],
-        ]}/>
-        <Leaderboard items={this.computeSubmissionTableValues()} columns={[
-          ['Title', 'title'],
-          ['Artists', 'artists'],
-          ['Platform', 'platform'],
-          ['Quality Score', 'quality_score'],
-          ['Energy Score', 'energy_score'],
-          ['Post-peak score', 'post_peak_score'],
-          ['Votes', 'info_score'],
-        ]}/>
+        <Leaderboard items={this.computeUserTableValues()}
+                     columns={[
+                       ['Name', 'name'],
+                       ['Email address', 'email'],
+                       ['Songs submitted', 'submissions'],
+                       ['Votes submitted', 'votes'],
+                     ]}
+                     initial_sort_key={'votes'}
+        />
+        <Leaderboard
+          items={this.computeSubmissionTableValues()}
+          columns={[
+            ['Title', 'title'],
+            ['Artists', 'artists'],
+            ['Platform', 'platform'],
+            ['Quality Score', 'quality_score'],
+            ['Energy Score', 'energy_score'],
+            ['Post-peak score', 'post_peak_score'],
+            ['Votes', 'info_score'],
+          ]}
+          initial_sort_key={'quality_score'}
+        />
       </>
     );
   }

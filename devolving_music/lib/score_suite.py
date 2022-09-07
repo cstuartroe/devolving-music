@@ -28,24 +28,13 @@ def _update_song_rating(
             song1.post_peak_score, song2.post_peak_score, score_range, comparison_submission.first_post_peakier)
 
 
-def _get_event_comparisons(event: Event):
-    return list(
-        SongComparison.objects.select_related('first_submission').filter(
-            first_submission__event__exact=event).order_by('id'))
-
-
 class ScoreSuite:
 
     def __init__(self, song_sub: "SongSubmission"):
-
         self.song_submission = song_sub
-
         self.energy_score = None
-
         self.quality_score = None
-
         self.post_peak_score = None
-
         self.counted_compares = set()
 
     @property
@@ -69,8 +58,7 @@ class ScoreSuite:
 
     def to_json(self):
         return {
-            "song_submission": SongSubmissionSerializer(
-                self.song_submission).data,
+            "song_submission": self.song_submission.to_json(),
             "energy_score": self.energy_score,
             "quality_score": self.quality_score,
             "post_peak_score": self.post_peak_score,
@@ -92,9 +80,13 @@ class ScoreSuite:
 
     @staticmethod
     def get_voteable_submissions(event: Event):
+        qs = (SongSubmission.objects.select_related('song').prefetch_related('song__artists')
+              .select_related('event').select_related('submitter').prefetch_related('possible_prior_duplicates')
+              .filter(event__exact=event).order_by('id'))
+
         return [
             sub
-            for sub in SongSubmission.objects.filter(event__exact=event).order_by('id')
+            for sub in qs
             if sub.voteable()
         ]
 
@@ -105,9 +97,14 @@ class ScoreSuite:
             for sub in ScoreSuite.get_voteable_submissions(event)
         }
 
-        for comparison in _get_event_comparisons(event):
-            song_suite_1 = scores_dict[comparison.first_submission.id]
-            song_suite_2 = scores_dict[comparison.second_submission.id]
+        qs = list(SongComparison.objects
+                  .select_related('first_submission')
+                  .filter(first_submission__event__exact=event)
+                  .order_by('id'))
+
+        for comparison in qs:
+            song_suite_1 = scores_dict[comparison.first_submission_id]
+            song_suite_2 = scores_dict[comparison.second_submission_id]
             _update_song_rating(comparison, song_suite_1, song_suite_2)
 
         return list(scores_dict.values())

@@ -31,3 +31,11 @@ class Artist(models.Model):
 
     def __str__(self):
         return f"{self.name} on {self.platform}"
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "platform": self.platform,
+            "platform_id": self.platform_id,
+        }

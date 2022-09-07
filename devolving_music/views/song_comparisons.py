@@ -27,10 +27,16 @@ class SongComparisonsView(LoginRequiredMixin, APIView):
 
     @safe_url_params
     def get(self, _request, event: Event):
-        qs = SongComparison.objects.select_related('first_submission').filter(first_submission__event_id=event.id)
-        
+        qs = list(SongComparison.objects
+                  .select_related('first_submission__song').prefetch_related('first_submission__song__artists')
+                  .select_related('first_submission__event').select_related('first_submission__submitter')
+                  .select_related('second_submission__song').prefetch_related('second_submission__song__artists')
+                  .select_related('second_submission__event').select_related('second_submission__submitter')
+                  .select_related('voter')
+                  .filter(first_submission__event_id=event.id))
+
         comparisons = [
-            SongComparisonSerializer(s).data
+            s.to_json()
             for s in qs
         ]
 

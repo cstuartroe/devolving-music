@@ -48,3 +48,11 @@ class Song(models.Model):
 
     def __str__(self):
         return f"{repr(self.title)} by {self.artists.all()[0]}"
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "artists": [a.to_json() for a in self.artists.all()],
+            "platform_id": self.platform_id,
+        }
